@@ -2,9 +2,7 @@
 
 package com.gomyck.fastdfs.starter.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
-import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.FileInfo;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
