@@ -75,7 +75,6 @@ public class config extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("ck-fastdfs/**").addResourceLocations("classpath:/META-INF/resources/ck-fastdfs/");
-        //以下两行配置代码为示例页面ckFastDFS.html依赖的一些资源, 在生产环境可以删掉
         registry.addResourceHandler("ck-util/**").addResourceLocations("classpath:/META-INF/resources/ck-util/");
         registry.addResourceHandler("ck-3pty/**").addResourceLocations("classpath:/META-INF/resources/ck-3pty/");
         super.addResourceHandlers(registry);
@@ -90,7 +89,9 @@ public class config extends WebMvcConfigurationSupport {
 
 #### 1.在需要开发文件上传的页面(你的业务页面), 引入js: 
 
-> host{:port}/{contextPath/}ck-fastdfs/js/ckFastDFS.js
+> host{:port}/{contextPath/}/ck-3pty/jquery/jquery-core.min.js
+> host{:port}/{contextPath/}/ck-fastdfs/js/webuploader.nolog.js
+> host{:port}/{contextPath/}/ck-fastdfs/js/ckFastDFS.js
 
 #### 2.开发文档
 
