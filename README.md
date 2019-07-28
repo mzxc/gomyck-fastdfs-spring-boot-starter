@@ -32,6 +32,11 @@
 ```
 #### 3.编辑yml文件(以下为全量配置):
 ```text
+#单个文件上传大小限制
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5000MB
 #fastdfs客户端配置
 fdfs:
   connect-timeout: 1601
