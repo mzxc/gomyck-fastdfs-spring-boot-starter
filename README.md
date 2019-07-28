@@ -10,7 +10,7 @@
         <url>http://nexus.gomyck.com/nexus/content/repositories/gomyck-repo/</url>
     </repository>
     
-    <!-- 快照版本更新频繁, 如不想和作者保持同步, 请删除下面仓库地址并使用release版本: 1.0.0-release -->
+    <!-- 快照版本更新频繁, 如不想和作者保持同步, 请删除下面仓库地址并使用release版本: 1.0.1-release -->
     <repository>
         <id>gomyck-repo-snapshot</id>
         <name>Gomyck proxy Ali Snapshot</name>
