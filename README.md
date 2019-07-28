@@ -122,7 +122,6 @@ const cfd = new CkFastDFS(option);
     },
     uploadListener: {  //上传监听(非必填)  
         
-        
         // 参数说明: 
         // refer:点击上传的按钮jq对象   
         // file:上传的文件   
@@ -154,7 +153,7 @@ const cfd = new CkFastDFS(option);
         uploadSuccess: function (refer, file, result) {
             console.log("上传成功: " + refer + "|||" + file.id + "|||" + JSON.stringify(result));
         },
-        //上传完成
+        //上传完成(不管上传成功失败, 都会触发该方法)
         uploadComplete: function (refer, file) {
             console.log("上传完成: " + refer + "|||" + file.id);
         },
