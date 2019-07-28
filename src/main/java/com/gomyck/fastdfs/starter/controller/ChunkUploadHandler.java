@@ -126,7 +126,6 @@ public class ChunkUploadHandler {
                     }
                     BeanUtils.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
                     us.saveFileUploadStatus(fileUploadStatus);
-                    //最后一块,清空upload,写入数据库
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
                         fileUploadStatus.setUploadTime(DateUtils.now2Str(DateUtils.DUF.CN_DATETIME_FORMAT));
