@@ -341,7 +341,6 @@ class CkFastDFS {
             url: url,
             data: data,
             cache: false,
-            async: true, // 同步
             dataType: "json",
             success: success,
             error: error
@@ -361,7 +360,6 @@ class CkFastDFS {
             url: url,
             data: data,
             cache: false,
-            async: true, // 同步
             dataType: "json",
             success: success,
             error: error
