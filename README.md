@@ -109,7 +109,7 @@ const cfd = new CkFastDFS(option);
 ```javascript
 { 
     baseURI: "../../",  //后端服务URI(包括上下文) (非必填)
-    fastDFSGroup: "group1",  //文件上传至fastdfs的文组名 (非必填)
+    fastDFSGroup: "group1",  //文件上传至fastdfs的组名 (非必填)
     uploaderConfig: {},  //webUploader配置 (非必填)
     uploadButton: {   //按钮配置 (必填)
         buttonId: "#btn1", //选择器 (必填), 支持jq插件所支持的所有selector类型
@@ -165,3 +165,9 @@ const cfd = new CkFastDFS(option);
     }
 }
 ```
+
+### 待实现:
+> 1. 分块下载
+> 2. 断点续传(下载)
+> 3. 断点续传前后端校验(历史上传的块与本次上传的块大小是否一致, 否则会导致修改块大小配置导致上传文件有问题)     
+> 4.    
