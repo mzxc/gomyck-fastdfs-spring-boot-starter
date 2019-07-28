@@ -101,7 +101,62 @@ const cfd = new CkFastDFS(option);
 多实例存在的场景: 多个文件服务分组, 当不同的按钮上传文件到不同分组时, 可能需要页面多实例来处理
 
 ##### 2.option参数说明: 
-参数名 | 参数说明 | 是否必填 
-
-baseURI | 后端服务的URI(包括上下文) | 否
-
+```javascript
+{ 
+    baseURI: "../../",  //后端服务URI(包括上下文) (非必填)
+    fastDFSGroup: "group1",  //文件上传至fastdfs的文组名 (非必填)
+    uploaderConfig: {},  //webUploader配置 (非必填)
+    uploadButton: {   //按钮配置 (必填)
+        buttonId: "#btn1", //选择器 (必填), 支持jq插件所支持的所有selector类型
+        multiple: true  //是否允许多文件选择 (非必填, 默认false)
+    },
+    uploadProgressBar: {  //进度条 (非必填)
+        changeBar: function (refer, file, progressVal) {  //文件上传中, 进度改变时会触发该方法 
+            console.log("进度条改变: " + refer + "|||" + file.id + "|||" + progressVal);
+        }
+    },
+    uploadListener: {  //上传监听(非必填)  
+        
+        
+        // 参数说明: 
+        // refer:点击上传的按钮jq对象   
+        // file:上传的文件   
+        // result:后端服务返回的结果
+        // reason:错误类型, 通常为字符串: server
+        
+        //添加文件信息
+        appendFileInfo: function (refer, file) {
+            console.log("选择文件: " + refer + "|||" + file.id);
+        },
+        //添加到上传队列之前
+        beforeAppendFileInQueued: function (refer, file) {
+            console.log("添加到队列之前: " + refer + "|||" + file.id);
+            return true;
+        },
+        //开始上传
+        beginUpload: function (refer, file) {
+            console.log("开始上传: " + refer + "|||" + file.id);
+        },
+        //分块上传成功
+        chunkUploadSuccess: function (refer, file, result) {
+            console.log("分块上传成功:" + refer + "|||" + file.id + "|||" + JSON.stringify(result))
+        },
+        //上传出错
+        uploadError: function (refer, file, reason) {
+            console.log("上传失败: " + refer + "|||" + file.id + "|||" + reason);
+        },
+        //上传成功
+        uploadSuccess: function (refer, file, result) {
+            console.log("上传成功: " + refer + "|||" + file.id + "|||" + JSON.stringify(result));
+        },
+        //上传完成
+        uploadComplete: function (refer, file) {
+            console.log("上传完成: " + refer + "|||" + file.id);
+        },
+        //全局错误
+        error: function (type, tips) {
+            console.log("全局错误: " + type + "|||" + tips)
+        }
+    }
+}
+```
