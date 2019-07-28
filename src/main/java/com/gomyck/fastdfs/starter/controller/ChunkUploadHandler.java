@@ -98,8 +98,7 @@ public class ChunkUploadHandler {
             } else if (currentChunk > (hasUploadChunk + 1)) {
                 return R.error(R._500, "非法的文件块, 请重试");
             }
-            StorePath path = null;
-            //暂时不支持多文件上传,后续版本可以再加上
+            StorePath path;
             for (final MultipartFile file : files) {
                 if (file.isEmpty()) {
                     continue;
