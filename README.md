@@ -102,6 +102,6 @@ const cfd = new CkFastDFS(option);
 
 ##### 2.option参数说明: 
 参数名 | 参数说明 | 是否必填 
----|---
+
 baseURI | 后端服务的URI(包括上下文) | 否
-1 | row 2 col 2 | 阿萨德
+
