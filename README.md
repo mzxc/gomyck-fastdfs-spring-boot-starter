@@ -169,7 +169,7 @@ const cfd = new CkFastDFS(option);
 ```javascript
 cfd.addButton(selector);  //向实例中添加按钮
 cfd.pauseUpload(param);   //暂停上传  param 为布尔值时, 为暂停正在上传的文件, file类型时, 暂停指定file的上传, null|undefined时为全部暂停
-cfd.cancleUpload(file);   //取消置顶文件的上传
+cfd.cancleUpload(file);   //取消指定文件的上传
 ```
 #### 4.其他说明
 1. 如何在自己的项目中添加fastdfs客户端实例:
