@@ -184,12 +184,13 @@ cfd.cancleUpload(file);   //取消指定文件的上传
     
     AppendFileStorageClient - 支持文件续传操作的接口 (StorageServer接口)
 
-2. 如何扩展前端js
+2. 如何扩展前端js: 
+
     请参考类:CkFastDFS.js
     
     请参考webUploader官网API
     
-    当然, 你也可以随意改动现有版本分支的代码, 打包后供他人使用(修改后的分支代码, pom文件中的parent请删掉, 并手动指定依赖版本, 否则会出现版本不一致问题)
+    当然, 你也可以fork master分支代码, 打包后供他人使用(修改后的分支代码, pom文件中的parent请删掉, 并手动指定依赖版本, 否则可能会出现版本不一致问题)
 
 ### 下一版本实现:
 > 1. 分块下载
