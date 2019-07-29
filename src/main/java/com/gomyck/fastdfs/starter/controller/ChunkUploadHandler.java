@@ -98,8 +98,7 @@ public class ChunkUploadHandler {
             } else if (currentChunk > (hasUploadChunk + 1)) {
                 return R.error(R._500, "非法的文件块, 请重试");
             }
-            StorePath path = null;
-            //暂时不支持多文件上传,后续版本可以再加上
+            StorePath path;
             for (final MultipartFile file : files) {
                 if (file.isEmpty()) {
                     continue;
@@ -127,7 +126,6 @@ public class ChunkUploadHandler {
                     }
                     BeanUtils.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
                     us.saveFileUploadStatus(fileUploadStatus);
-                    //最后一块,清空upload,写入数据库
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
                         fileUploadStatus.setUploadTime(DateUtils.now2Str(DateUtils.DUF.CN_DATETIME_FORMAT));
