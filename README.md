@@ -173,15 +173,22 @@ cfd.cancleUpload(file);   //取消置顶文件的上传
 ```
 #### 4.其他说明
 1. 如何在自己的项目中添加fastdfs客户端实例:
+
     使用@Autowired即可注入以下接口实例
+    
     TrackerClient - TrackerServer接口
+    
     GenerateStorageClient - 一般文件存储接口 (StorageServer接口)
+    
     FastFileStorageClient - 为方便项目开发集成的简单接口(StorageServer接口)
+    
     AppendFileStorageClient - 支持文件续传操作的接口 (StorageServer接口)
 
 2. 如何扩展前端js
     请参考类:CkFastDFS.js
+    
     请参考webUploader官网API
+    
     当然, 你也可以随意改动现有版本分支的代码, 打包后供他人使用(修改后的分支代码, pom文件中的parent请删掉, 并手动指定依赖版本, 否则会出现版本不一致问题)
 
 ### 下一版本实现:
