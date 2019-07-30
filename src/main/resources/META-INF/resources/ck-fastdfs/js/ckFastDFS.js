@@ -23,7 +23,7 @@ class CkFastDFS {
          * 服务地址+服务上下文
          */
         this.baseURI = option.baseURI || "/";
-        if(this.baseURI.lastIndexOf("/") == (this.baseURI.length - 1)){
+        if (this.baseURI.lastIndexOf("/") == (this.baseURI.length - 1)) {
             this.baseURI = this.baseURI.substring(0, this.baseURI.length - 1);
         }
         this.checkURI      = this.baseURI + '/upload/chunkUpload/checkFile';
@@ -58,11 +58,11 @@ class CkFastDFS {
         this.uploaderStatus = $.Deferred();
         this.initProgressBar(option.uploadProgressBar);//初始化进度条配置
         this.initUploaderListener(option.uploadListener);//初始化监听配置
-        this.chunkMap = this.initMap(); //存储分块信息的map
-        if (!CkFastDFS.prototype.hasOwnProperty("webUploaderRegistered")) {
-            this.registerWebUploader(); //注册webUpLoader默认项
+        if (!CkFastDFS.prototype.hasOwnProperty("initOnce")) {
+            CkFastDFS.prototype.chunkMap = this.initMap(); //存储分块信息的map
             //初始化标记, webUploader事件只注册一次, 否则出现重复调用
-            CkFastDFS.prototype.webUploaderRegistered = true;
+            this.registerWebUploader(); //注册webUpLoader默认项
+            CkFastDFS.prototype.initOnce = true;
         }
         this.uploader   = null; //上传插件实例
         this.uploaderId = this.initWebUpLoader();//上传插件ID
@@ -136,10 +136,11 @@ class CkFastDFS {
             },
             {
                 beforeSendFile: function (file) {
-                    const fileId   = file.id;   //文件ID
-                    const fileName = file.name; //文件名称
-                    const fileSize = file.size; //文件大小
-                    const task     = new $.Deferred();
+                    const fileId    = file.id;   //文件ID
+                    const fileName  = file.name; //文件名称
+                    const fileSize  = file.size; //文件大小
+                    const task      = new $.Deferred();
+                    let currentThis = this;
                     _this.uploader.md5File(file).then(function (fileMd5) {
                         const url  = _this.checkURI;
                         const data = {
@@ -149,7 +150,6 @@ class CkFastDFS {
                             fileSize: fileSize
                         };
                         _this.httpPostRequest(url, data, function (data) {
-                            _this.chunkMap.put(fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             if (!data.isOk) {
                                 _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
                                 task.reject();
@@ -167,6 +167,7 @@ class CkFastDFS {
                                 task.reject();
                                 return;
                             }
+                            _this.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             task.resolve();
                         }, function () {
                             _this.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
@@ -177,7 +178,7 @@ class CkFastDFS {
                 },
                 beforeSend: function (block) {
                     const task   = new $.Deferred();
-                    const fileId = block.file.id;
+                    const fileId = this.owner.ckId + block.file.id;
                     const chunk  = _this.chunkMap.get(fileId).chunk; //当前第几块
                     if (block.chunk < chunk) {
                         task.reject();
@@ -233,6 +234,7 @@ class CkFastDFS {
             finalConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
             finalConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
             _this.uploader                  = WebUploader.create(finalConfig);
+            _this.uploader.ckId             = uploaderId;
             _this.uploaderStatus.resolve();
         });
         return uploaderId;
@@ -253,7 +255,8 @@ class CkFastDFS {
             });
             //此处是发送给服务端的参数
             _uploader.on('uploadBeforeSend', function (block, data) {
-                data.fileMd5   = _this.chunkMap.get(block.file.id).fileMd5;
+                const fileId   = _this.uploader.ckId + block.file.id;
+                data.fileMd5   = _this.chunkMap.get(fileId).fileMd5;
                 data.chunkSize = block.blob.size;
                 data.group     = _this.fastDFSGroup;
             });
@@ -545,10 +548,10 @@ class CkFastDFS {
      * 暂停上传
      * @param param 布尔值时, 为暂停正在上传的文件, file类型时, 暂停指定file的上传, null|undefined时为暂停
      */
-    pauseUpload(param){
-        if(param){
+    pauseUpload(param) {
+        if (param) {
             this.uploader.stop(param);
-        }else{
+        } else {
             this.uploader.stop();
         }
     }
@@ -557,10 +560,10 @@ class CkFastDFS {
      * 取消上传
      * @param file 文件信息
      */
-    cancleUpload(file){
-        if(file){
+    cancleUpload(file) {
+        if (file) {
             this.uploader.cancelFile(file);
-        }else{
+        } else {
             console.error("no file info can be cancel")
         }
     }
