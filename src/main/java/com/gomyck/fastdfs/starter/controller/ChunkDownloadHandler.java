@@ -27,7 +27,7 @@ public class ChunkDownloadHandler {
     @Autowired
     UploadService us;
 
-    long chunkFileSize = 100L; //每次下载1M
+    long chunkFileSize = 1000000L; //每次下载1M
 
     /**
      * 文件下载 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
@@ -55,11 +55,13 @@ public class ChunkDownloadHandler {
 
             if((cycle + 1) * chunkFileSize < remoteFileInfo.getFileSize()){
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
-                ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), false);
+                boolean ifDownload = ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), false);
+                if(!ifDownload) return;
             }else{
                 downloadFileSize = remoteFileInfo.getFileSize() - (cycle * chunkFileSize);
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
-                ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
+                boolean ifDownload = ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
+                if(!ifDownload) return;
             }
             offset = offset + chunkFileSize; //偏移量改变
         }
