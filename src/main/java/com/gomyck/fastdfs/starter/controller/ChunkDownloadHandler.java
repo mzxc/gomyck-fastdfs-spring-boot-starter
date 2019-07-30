@@ -39,10 +39,11 @@ public class ChunkDownloadHandler {
      */
     @GetMapping("downloadFile")
     public void chunkDownload(String fileMd5){
-        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
         DownloadByteArray callback = new DownloadByteArray();
-
+        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
+        if(fileInfo == null) return;
         FileInfo remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
+        if(remoteFileInfo == null) return;
         long cycle = 0L;  //下载次数
         long offset = 0L; //当前偏移量
         long downloadFileSize = chunkFileSize; //当前实际要下载的块大小
