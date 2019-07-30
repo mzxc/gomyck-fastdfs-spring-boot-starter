@@ -3,6 +3,7 @@ package com.gomyck.fastdfs.starter.controller;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.gomyck.fastdfs.starter.common.FileNotFoundException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.ResponseWriter;
@@ -41,9 +42,9 @@ public class ChunkDownloadHandler {
     public void chunkDownload(String fileMd5){
         DownloadByteArray callback = new DownloadByteArray();
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if(fileInfo == null) return;
+        if(fileInfo == null) throw new FileNotFoundException("数据列表中不存在该文件");
         FileInfo remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
-        if(remoteFileInfo == null) return;
+        if(remoteFileInfo == null) throw new FileNotFoundException("文件服务器中不存在该文件");
         long cycle = 0L;  //下载次数
         long offset = 0L; //当前偏移量
         long downloadFileSize = chunkFileSize; //当前实际要下载的块大小
