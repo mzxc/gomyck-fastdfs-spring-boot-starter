@@ -3,8 +3,6 @@ package com.gomyck.fastdfs.starter.controller;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
-import com.github.tobato.fastdfs.service.GenerateStorageClient;
-import com.github.tobato.fastdfs.service.TrackerClient;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.ResponseWriter;
