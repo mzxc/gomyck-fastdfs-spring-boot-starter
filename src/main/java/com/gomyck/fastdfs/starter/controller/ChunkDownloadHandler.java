@@ -7,6 +7,7 @@ import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.ResponseWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,8 @@ public class ChunkDownloadHandler {
     @Autowired
     UploadService us;
 
-    long chunkFileSize = 1000000L; //每次下载1M
+    @Value("${gomyck.fastdfs.download-chunk-size: 1000000}")
+    private long chunkFileSize;
 
     /**
      * 文件下载 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
