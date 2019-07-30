@@ -61,7 +61,8 @@ gomyck:
     password: xxxxx
     port: 6379
   fastdfs: #fastdfs上传配置
-    chunk-size: 5 #分块大小, 上传文件分块的大小
+    chunk-size: 5 #分块大小, 上传文件分块的大小 单位: MB
+    download-chunk-size: 100  #分块下载大小  单位: byte
     group-id: group1 #fastdfs的组, 文件会被存到这个组下
     file-server-protocol: http #远程文件服务连接协议
     file-server-url: 192.168.1.196 #远程文件服务连接地址
