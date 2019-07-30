@@ -3,6 +3,8 @@ package com.gomyck.fastdfs.starter.controller;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.github.tobato.fastdfs.service.GenerateStorageClient;
+import com.github.tobato.fastdfs.service.TrackerClient;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.ResponseWriter;
@@ -27,7 +29,7 @@ public class ChunkDownloadHandler {
     @Autowired
     UploadService us;
 
-    int chunkFileSize = 1000000; //每次下载1M
+    long chunkFileSize = 100L; //每次下载1M
 
     /**
      * 文件下载 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
@@ -41,39 +43,28 @@ public class ChunkDownloadHandler {
         DownloadByteArray callback = new DownloadByteArray();
 
         FileInfo remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
-        long cycle = 0;  //下载次数
-        long offset = 0; //当前偏移量
+        long cycle = 0L;  //下载次数
+        long offset = 0L; //当前偏移量
         long downloadFileSize = chunkFileSize; //当前实际要下载的块大小
         long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
-        for(;;cycle = cycle + 1){
+        for(;;cycle = cycle + 1L){
             //todo 如果文件大小 小于分块大小, 一次性下载
             if(remoteFileSize <= chunkFileSize){
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
-                ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), false);
+                ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
                 return;
             }
-            //todo 先下载一块
-            byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
-            if(cycle * chunkFileSize < remoteFileInfo.getFileSize()){
+
+            if((cycle + 1) * chunkFileSize < remoteFileInfo.getFileSize()){
+                byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
                 ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), false);
-                offset = offset + chunkFileSize + 1;
             }else{
+                downloadFileSize = remoteFileInfo.getFileSize() - (cycle * chunkFileSize);
+                byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
                 ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
             }
-
+            offset = offset + chunkFileSize; //偏移量改变
         }
-
-
-
-
-
-        //content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 101, 63, callback);
-
-
-//        }
-
-
-
 
     }
 
