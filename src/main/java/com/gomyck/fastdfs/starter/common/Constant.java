@@ -29,6 +29,8 @@ public class Constant {
     private final static String UPLOADING = "Uploading:";
     //全部上传成功的文件
     public final static String COMPLETED_LIST = UPLOADING + "completedList";
+    //全部上传成功的文件_map(方便取单条)
+    public final static String COMPLETED_MAP = UPLOADING + "completedMap";
     //正在上传的文件
     public final static String FILE_INFO = UPLOADING + "fileInfo";
 

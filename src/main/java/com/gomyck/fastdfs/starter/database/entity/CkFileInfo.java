@@ -8,7 +8,7 @@ package com.gomyck.fastdfs.starter.database.entity;
  * @see [相关类/方法]
  * @since [2019-07-24]
  */
-public class FileInfo {
+public class CkFileInfo {
 
     private String id;
 

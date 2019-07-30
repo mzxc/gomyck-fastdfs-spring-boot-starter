@@ -2,7 +2,7 @@
 
 package com.gomyck.fastdfs.starter.database;
 
-import com.gomyck.fastdfs.starter.database.entity.FileInfo;
+import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.R;
 
 import java.util.List;
@@ -20,20 +20,29 @@ public interface UploadService {
      * @param fileInfo
      * @return
      */
-    R saveUploadInfo(FileInfo fileInfo);
+    R saveUploadInfo(CkFileInfo fileInfo);
 
     /**
      * 查询已上传完成的文件列表(查询已完成上传的文件列表)
      * @return
      */
-    List<FileInfo> selectCompleteFileInfo();
+    List<CkFileInfo> selectCompleteFileInfo();
 
     /**
      * 删除文件(单个, 从已完成列表中删除)
      * @param messageDigest
      * @return
      */
-    R delFile(FileInfo messageDigest);
+    R delFile(CkFileInfo messageDigest);
+
+
+    /**
+     * 根据摘要, 获取文件信息(已完成列表中获取)
+     * @param fileMd5
+     * @return
+     */
+    CkFileInfo getFileByMessageDigest(String fileMd5);
+
 
     //--------------以下为上传辅助接口, 为了保存单个文件上传临时状态-----------
 
@@ -42,7 +51,7 @@ public interface UploadService {
      * @param fileInfo 文件信息
      * @return
      */
-    R saveFileUploadStatus(FileInfo fileInfo);
+    R saveFileUploadStatus(CkFileInfo fileInfo);
 
     /**
      * 删除单个文件上传状态
@@ -56,6 +65,6 @@ public interface UploadService {
      * @param fileMd5
      * @return
      */
-    FileInfo getFileUploadStatus(String fileMd5);
+    CkFileInfo getFileUploadStatus(String fileMd5);
 
 }

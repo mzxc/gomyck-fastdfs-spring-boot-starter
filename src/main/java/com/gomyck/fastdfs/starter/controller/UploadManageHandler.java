@@ -5,7 +5,7 @@ package com.gomyck.fastdfs.starter.controller;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
-import com.gomyck.fastdfs.starter.database.entity.FileInfo;
+import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.ParaUtils;
 import com.gomyck.util.R;
@@ -46,12 +46,12 @@ public class UploadManageHandler {
     @ResponseBody
     public R delFile(String fileMd5) {
         ServiceCheck.uploadServiceCheck(us);
-        List<FileInfo> fileInfos = us.selectCompleteFileInfo();
+        List<CkFileInfo> fileInfos = us.selectCompleteFileInfo();
         if (fileInfos == null) {
             return R.error(R._500, "文件服务器不存在该文件");
         }
-        FileInfo fileInfo = new FileInfo();
-        for (FileInfo e : fileInfos) {
+        CkFileInfo fileInfo = new CkFileInfo();
+        for (CkFileInfo e : fileInfos) {
             if (fileMd5.equals(e.getFileMd5())) {
                 fileInfo = e;
                 break;

@@ -149,6 +149,7 @@ class CkFastDFS {
                             fileSize: fileSize
                         };
                         _this.httpPostRequest(url, data, function (data) {
+                            _this.chunkMap.put(fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             if (!data.isOk) {
                                 _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
                                 task.reject();
@@ -166,7 +167,6 @@ class CkFastDFS {
                                 task.reject();
                                 return;
                             }
-                            _this.chunkMap.put(fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             task.resolve();
                         }, function () {
                             _this.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
@@ -212,8 +212,8 @@ class CkFastDFS {
             server: uploadURLString,
             accept: {
                 title: '支持的文件类型',
-                extensions: 'jpg,jpeg,png,gif,bmp,doc,docx,pdf,xls,xlsx,ppt,pptx,zip,rar',
-                mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif,image/bmp,application/msword,' +
+                extensions: 'txt,jpg,jpeg,png,gif,bmp,doc,docx,pdf,xls,xlsx,ppt,pptx,zip,rar',
+                mimeTypes: 'text/plain,/image/jpg,image/jpeg,image/png,image/gif,image/bmp,application/msword,' +
                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,' +
                     'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,' +
                     'application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-zip-compressed,application/x-rar-compressed'

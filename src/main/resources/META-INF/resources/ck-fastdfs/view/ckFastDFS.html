@@ -138,6 +138,7 @@
                     <td class="text-center text-muted" style="vertical-align: middle;"><span>${_temp.uploadTime}</span></td >
                     <td class="text-center text-muted" style="vertical-align: middle;">
                         <a target="_blank" href="${data.resData.fileServerUrl}/${_temp.group}/${_temp.uploadPath}" >查看</a >
+                        <a target="_blank" download href="../../download/chunkDownload/downloadFile?fileMd5=${_temp.fileMd5}" >下载</a >
                         <a class="del" fileMd5="${_temp.fileMd5}" >删除</a >
                     </td >
                 </tr >`;

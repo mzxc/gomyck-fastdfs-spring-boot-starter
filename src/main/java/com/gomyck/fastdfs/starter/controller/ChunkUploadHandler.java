@@ -7,7 +7,7 @@ import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
-import com.gomyck.fastdfs.starter.database.entity.FileInfo;
+import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.lock.FileLock;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.*;
@@ -61,13 +61,13 @@ public class ChunkUploadHandler {
 
     @PostMapping("/uploadFile")
     @ResponseBody
-    public R uploadFile(FileInfo fileInfo, HttpServletRequest request) {
+    public R uploadFile(CkFileInfo fileInfo, HttpServletRequest request) {
         ServiceCheck.uploadServiceCheck(us);
         boolean ifHasLock = false;
         String fileLock = Constant.FILE_LOCK + fileInfo.getFileMd5();
         if (StringJudge.isNull(fileInfo.getChunk())) fileInfo.setChunk("0");
         if (StringJudge.isNull(fileInfo.getChunks())) fileInfo.setChunks("0");
-        FileInfo fileUploadStatus = us.getFileUploadStatus(fileInfo.getFileMd5());
+        CkFileInfo fileUploadStatus = us.getFileUploadStatus(fileInfo.getFileMd5());
         //设置文件分组
         if(fileUploadStatus != null){ //如果历史文件不为空, 把当前的分组设置为原来的分组, 防止前端传过来的分组与历史不符
             fileInfo.setGroup(fileUploadStatus.getGroup());
@@ -90,7 +90,7 @@ public class ChunkUploadHandler {
                     hasUploadChunk = Integer.parseInt(chunk);
                 }
             }else{
-                fileUploadStatus = new FileInfo();
+                fileUploadStatus = new CkFileInfo();
             }
             Integer currentChunk = Integer.parseInt(fileInfo.getChunk());
             if (currentChunk < hasUploadChunk) {
@@ -153,19 +153,19 @@ public class ChunkUploadHandler {
         if(fl.ifLock(fileLock)){
             return R.error(R._500, "当前文件正在被上传, 请稍后再试");
         }
-        List<FileInfo> fileInfos = us.selectCompleteFileInfo();
+        List<CkFileInfo> fileInfos = us.selectCompleteFileInfo();
         if (fileInfos != null) {
-            for (FileInfo e : fileInfos) {
+            for (CkFileInfo e : fileInfos) {
                 if (fileMd5.equals(e.getFileMd5())) {
                     return R.ok(R._302, e);
                 }
             }
         }
-        FileInfo fileUploadStatus = us.getFileUploadStatus(fileMd5);
+        CkFileInfo fileUploadStatus = us.getFileUploadStatus(fileMd5);
         if (fileUploadStatus != null && StringJudge.notNull(fileUploadStatus.getChunk())) {
             return R.ok(fileUploadStatus);
         } else {
-            fileUploadStatus = new FileInfo();
+            fileUploadStatus = new CkFileInfo();
             fileUploadStatus.setChunk("0");
             return R.ok(fileUploadStatus);
         }
