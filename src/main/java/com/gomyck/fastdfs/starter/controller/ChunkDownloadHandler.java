@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author gomyck QQ:474798383
@@ -39,7 +40,8 @@ public class ChunkDownloadHandler {
      * @return
      */
     @GetMapping("downloadFile")
-    public void chunkDownload(String fileMd5){
+    public void chunkDownload(String fileMd5, ModelAndView mav){
+        mav.clear();
         DownloadByteArray callback = new DownloadByteArray();
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
         if(fileInfo == null) throw new FileNotFoundException("数据列表中不存在该文件");
