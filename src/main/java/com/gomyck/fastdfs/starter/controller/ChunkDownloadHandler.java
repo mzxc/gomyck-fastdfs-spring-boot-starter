@@ -63,8 +63,8 @@ public class ChunkDownloadHandler {
             }else{
                 downloadFileSize = remoteFileSize - (cycle * chunkFileSize);
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
-                boolean ifDownload = ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
-                if(!ifDownload) return;
+                ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
+                return;
             }
             offset = offset + chunkFileSize; //偏移量改变
         }
