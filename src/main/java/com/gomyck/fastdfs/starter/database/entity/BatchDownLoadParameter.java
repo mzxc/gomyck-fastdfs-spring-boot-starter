@@ -8,11 +8,11 @@ package com.gomyck.fastdfs.starter.database.entity;
  */
 public class BatchDownLoadParameter {
 
-    private String fileMd5; //文件摘要
+    private String fileMd5 = ""; //文件摘要
 
-    private String zipSrc; //在压缩包中的目录
+    private String zipSrc = ""; //在压缩包中的目录
 
-    private String fileName; //文件名, 可以为空, 空时取原始文件名
+    private String fileName = ""; //文件名, 可以为空, 空时取原始文件名
 
     public String getFileMd5() {
         return fileMd5;
