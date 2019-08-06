@@ -126,7 +126,9 @@ public class ChunkDownloadHandler {
      * 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
      *
      * @param downloadInfo 附加了目录信息
-     *
+     *                     fileMd5: 文件摘要
+     *                     zipSrc: 文件在压缩包中的路径 exp: /demo/xxx/gomyck/  前后的 / 不可少
+     *                     fileName: 文件名称, 如果为空, 则取文件服务器内的文件名
      */
     @GetMapping("batchDownloadFileHasGroup")
     @ResponseBody
