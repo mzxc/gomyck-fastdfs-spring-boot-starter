@@ -43,7 +43,7 @@ public class ChunkDownloadHandler {
     @Autowired
     FastFileStorageClient ffsc;
 
-    @Autowired
+    @Autowired(required = false)
     UploadService us;
 
     @Value("${gomyck.fastdfs.download-chunk-size: 1000000}")

@@ -35,7 +35,7 @@ public class SimpleFileDownloadHandler {
     @Autowired
     FastFileStorageClient ffsc;
 
-    @Autowired
+    @Autowired(required = false)
     UploadService us;
 
     /**

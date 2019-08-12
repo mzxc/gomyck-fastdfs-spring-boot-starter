@@ -36,7 +36,7 @@ public class GomyckFastDFSConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty("gomyck.config.redis")
+    @ConditionalOnMissingBean(UploadService.class)
     @ConditionalOnBean(value = RedisCache.class)
     public UploadService initUploadService(){
         log.info("Initializing redis file upload Service....");
