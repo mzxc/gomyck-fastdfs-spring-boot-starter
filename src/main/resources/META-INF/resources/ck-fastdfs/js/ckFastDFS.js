@@ -8,6 +8,8 @@ class CkFastDFS {
 
     constructor(option) {
 
+        try{CkFastDFS.prototype.chunkMap.get(option.uploadButton.buttonId).destroy();}catch (e) {}
+
         CkFastDFS.prototype.SERVER_ERROR = "SERVER_ERROR";  //服务器错误
 
         CkFastDFS.prototype.FILE_IS_UPLOADED = "FILE_IS_UPLOADED"; //文件已上传过(秒传)
@@ -141,7 +143,7 @@ class CkFastDFS {
                     const fileSize  = file.size; //文件大小
                     const task      = new $.Deferred();
                     let currentThis = this;
-                    _this.uploader.md5File(file).then(function (fileMd5) {
+                    currentThis.owner.md5File(file).then(function (fileMd5) {
                         const url  = _this.checkURI;
                         const data = {
                             fileId: fileId,
@@ -151,26 +153,26 @@ class CkFastDFS {
                         };
                         _this.httpPostRequest(url, data, function (data) {
                             if (!data.isOk) {
-                                _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
+                                currentThis.owner.ckInstance.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
                                 task.reject();
                                 return;
                             }
                             if (data.resCode == 302) {
                                 _this.changeProgressBar(_this.getRefer(file), file, 1);
-                                _this.uploadListener.uploadSuccess(_this.getRefer(file), file, data);
+                                currentThis.owner.ckInstance.uploadListener.uploadSuccess(_this.getRefer(file), file, data);
                                 file.quickUp = true;
                                 task.reject();
                                 return;
                             }
                             if (!(data.resData.chunk >= 0)) {
-                                _this.uploadListener.error(_this.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
+                                currentThis.owner.ckInstance.uploadListener.error(_this.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
                                 task.reject();
                                 return;
                             }
                             _this.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             task.resolve();
                         }, function () {
-                            _this.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
+                            currentThis.owner.ckInstance.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
                             task.reject();
                         })
                     });
@@ -235,6 +237,8 @@ class CkFastDFS {
             finalConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
             _this.uploader                  = WebUploader.create(finalConfig);
             _this.uploader.ckId             = uploaderId;
+            _this.uploader.ckInstance       = _this;
+            CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId,  _this.uploader);
             _this.uploaderStatus.resolve();
         });
         return uploaderId;
