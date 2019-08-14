@@ -144,35 +144,35 @@ class CkFastDFS {
                     let currentThis = this;
                     const _this     = currentThis.owner.ckInstance;
                     currentThis.owner.md5File(file).then(function (fileMd5) {
-                        const url  = currentThis.owner.ckInstance.checkURI;
+                        const url  = _this.checkURI;
                         const data = {
                             fileId: fileId,
                             fileName: fileName,
                             fileMd5: fileMd5,
                             fileSize: fileSize
                         };
-                        currentThis.owner.ckInstance.httpPostRequest(url, data, function (data) {
+                        _this.httpPostRequest(url, data, function (data) {
                             if (!data.isOk) {
-                                currentThis.owner.ckInstance.uploadListener.error(currentThis.owner.ckInstance.SERVER_ERROR, data.resMsg);
+                                _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
                                 task.reject();
                                 return;
                             }
                             if (data.resCode == 302) {
-                                currentThis.owner.ckInstance.changeProgressBar(currentThis.owner.ckInstance.getRefer(file), file, 1);
-                                currentThis.owner.ckInstance.uploadListener.uploadSuccess(currentThis.owner.ckInstance.getRefer(file), file, data);
+                                _this.changeProgressBar(_this.getRefer(file), file, 1);
+                                _this.uploadListener.uploadSuccess(_this.getRefer(file), file, data);
                                 file.quickUp = true;
                                 task.reject();
                                 return;
                             }
                             if (!(data.resData.chunk >= 0)) {
-                                currentThis.owner.ckInstance.uploadListener.error(currentThis.owner.ckInstance.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
+                                _this.uploadListener.error(_this.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
                                 task.reject();
                                 return;
                             }
-                            currentThis.owner.ckInstance.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
+                            _this.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             task.resolve();
                         }, function () {
-                            currentThis.owner.ckInstance.uploadListener.error(currentThis.owner.ckInstance.SERVER_ERROR, '服务器错误, 请联系管理员');
+                            _this.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
                             task.reject();
                         })
                     });
