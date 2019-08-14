@@ -1,6 +1,6 @@
 /**
  * 文件上传控制器
- * author: gomyck
+ * author:  gomyck
  * qq: 474798383
  * email: hao474798383@163.com
  */
