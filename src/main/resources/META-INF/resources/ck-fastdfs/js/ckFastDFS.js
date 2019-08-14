@@ -131,7 +131,6 @@ class CkFastDFS {
      * 注册一些事件(全局一次)
      */
     registerWebUploader() {
-        const _this = this;
         WebUploader.Uploader.register({
                 "before-send-file": "beforeSendFile",
                 "before-send": "beforeSend"
@@ -144,35 +143,35 @@ class CkFastDFS {
                     const task      = new $.Deferred();
                     let currentThis = this;
                     currentThis.owner.md5File(file).then(function (fileMd5) {
-                        const url  = _this.checkURI;
+                        const url  = currentThis.owner.ckInstance.checkURI;
                         const data = {
                             fileId: fileId,
                             fileName: fileName,
                             fileMd5: fileMd5,
                             fileSize: fileSize
                         };
-                        _this.httpPostRequest(url, data, function (data) {
+                        currentThis.owner.ckInstance.httpPostRequest(url, data, function (data) {
                             if (!data.isOk) {
-                                currentThis.owner.ckInstance.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
+                                currentThis.owner.ckInstance.uploadListener.error(currentThis.owner.ckInstance.SERVER_ERROR, data.resMsg);
                                 task.reject();
                                 return;
                             }
                             if (data.resCode == 302) {
-                                _this.changeProgressBar(_this.getRefer(file), file, 1);
-                                currentThis.owner.ckInstance.uploadListener.uploadSuccess(_this.getRefer(file), file, data);
+                                currentThis.owner.ckInstance.changeProgressBar(currentThis.owner.ckInstance.getRefer(file), file, 1);
+                                currentThis.owner.ckInstance.uploadListener.uploadSuccess(currentThis.owner.ckInstance.getRefer(file), file, data);
                                 file.quickUp = true;
                                 task.reject();
                                 return;
                             }
                             if (!(data.resData.chunk >= 0)) {
-                                currentThis.owner.ckInstance.uploadListener.error(_this.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
+                                currentThis.owner.ckInstance.uploadListener.error(currentThis.owner.ckInstance.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
                                 task.reject();
                                 return;
                             }
-                            _this.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
+                            currentThis.owner.ckInstance.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                             task.resolve();
                         }, function () {
-                            currentThis.owner.ckInstance.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
+                            currentThis.owner.ckInstance.uploadListener.error(currentThis.owner.ckInstance.SERVER_ERROR, '服务器错误, 请联系管理员');
                             task.reject();
                         })
                     });
@@ -181,7 +180,7 @@ class CkFastDFS {
                 beforeSend: function (block) {
                     const task   = new $.Deferred();
                     const fileId = this.owner.ckId + block.file.id;
-                    const chunk  = _this.chunkMap.get(fileId).chunk; //当前第几块
+                    const chunk  = currentThis.owner.ckInstance.chunkMap.get(fileId).chunk; //当前第几块
                     if (block.chunk < chunk) {
                         task.reject();
                     } else {
