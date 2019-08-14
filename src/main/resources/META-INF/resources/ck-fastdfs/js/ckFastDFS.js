@@ -180,7 +180,7 @@ class CkFastDFS {
                 beforeSend: function (block) {
                     const task   = new $.Deferred();
                     const fileId = this.owner.ckId + block.file.id;
-                    const chunk  = currentThis.owner.ckInstance.chunkMap.get(fileId).chunk; //当前第几块
+                    const chunk  = this.owner.ckInstance.chunkMap.get(fileId).chunk; //当前第几块
                     if (block.chunk < chunk) {
                         task.reject();
                     } else {
