@@ -142,6 +142,7 @@ class CkFastDFS {
                     const fileSize  = file.size; //文件大小
                     const task      = new $.Deferred();
                     let currentThis = this;
+                    const _this     = currentThis.owner.ckInstance;
                     currentThis.owner.md5File(file).then(function (fileMd5) {
                         const url  = currentThis.owner.ckInstance.checkURI;
                         const data = {
