@@ -79,36 +79,36 @@ class CkFastDFS {
         const defaultUploadListener = {
             //添加文件信息
             appendFileInfo: function (refer, file) {
-                console.log("选择文件: " + refer + "|||" + file.id);
+                //console.log("选择文件: " + refer + "|||" + file.id);
             },
             //添加到上传队列之前
             beforeAppendFileInQueued: function (refer, file) {
-                console.log("添加到队列之前: " + refer + "|||" + file.id);
+                //console.log("添加到队列之前: " + refer + "|||" + file.id);
                 return true;
             },
             //开始上传
             beginUpload: function (refer, file) {
-                console.log("开始上传: " + refer + "|||" + file.id);
+                //console.log("开始上传: " + refer + "|||" + file.id);
             },
             //分块上传成功
             chunkUploadSuccess: function (refer, file, result) {
-                console.log("分块上传成功:" + refer + "|||" + file.id + "|||" + JSON.stringify(result))
+                //console.log("分块上传成功:" + refer + "|||" + file.id + "|||" + JSON.stringify(result))
             },
             //上传出错
             uploadError: function (refer, file, reason) {
-                console.log("上传失败: " + refer + "|||" + file.id + "|||" + reason);
+                //console.log("上传失败: " + refer + "|||" + file.id + "|||" + reason);
             },
             //上传成功
             uploadSuccess: function (refer, file, result) {
-                console.log("上传成功: " + refer + "|||" + file.id + "|||" + JSON.stringify(result));
+                //console.log("上传成功: " + refer + "|||" + file.id + "|||" + JSON.stringify(result));
             },
             //上传完成
             uploadComplete: function (refer, file) {
-                console.log("上传完成: " + refer + "|||" + file.id);
+                //console.log("上传完成: " + refer + "|||" + file.id);
             },
             //全局错误
             error: function (type, tips) {
-                console.log("全局错误: " + type + "|||" + tips)
+                //console.log("全局错误: " + type + "|||" + tips)
             }
         };
         this.uploadListener         = Object.assign({}, defaultUploadListener, config)
