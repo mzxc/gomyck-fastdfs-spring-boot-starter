@@ -42,24 +42,6 @@
             <artifactId>gomyck-util</artifactId>
         </dependency>
 
-
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>gomyck-repo</id>
-            <name>Gomyck proxy Ali</name>
-            <url>http://nexus.gomyck.com/nexus/content/repositories/gomyck-repo/</url>
-        </repository>
-        <repository>
-            <id>gomyck-repo-snapshot</id>
-            <name>Gomyck proxy Ali Snapshot</name>
-            <url>http://nexus.gomyck.com/nexus/content/repositories/gomyck-repo-snapshot/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
 
 </project>
