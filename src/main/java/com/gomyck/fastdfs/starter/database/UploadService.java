@@ -25,7 +25,7 @@ public interface UploadService {
     /**
      * 查询已上传完成的文件列表(查询已完成上传的文件列表)
      *
-     * @return List<CkFileInfo> 文件列表
+     * @return ListCkFileInfo 文件列表
      */
     List<CkFileInfo> selectCompleteFileInfo();
 
