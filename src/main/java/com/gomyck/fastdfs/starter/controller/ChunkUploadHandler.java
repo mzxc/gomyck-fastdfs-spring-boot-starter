@@ -88,6 +88,10 @@ public class ChunkUploadHandler {
                 String chunk = fileUploadStatus.getChunk();
                 if(StringJudge.notNull(chunk)){
                     hasUploadChunk = Integer.parseInt(chunk);
+                    //如果上传的块大于0 那么代表有过上传, 如果前端的块大小配置改变, 那么会导致上传文件异常
+                    if(!fileUploadStatus.getChunks().equals(fileInfo.getChunks())){
+                        return R.error(R._500, "文件块大小已更改, 请联系管理员");
+                    }
                 }
             }else{
                 fileUploadStatus = new CkFileInfo();
@@ -124,7 +128,9 @@ public class ChunkUploadHandler {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
                         }
                     }
-                    BeanUtils.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
+                    // 把本次传入的参数copy到历史数据中, 然后更新, 这里的copy会把最后一次上传的块大小也copy
+                    // 所以chunksize记录的是最后一次上传的块大小, 并不代表平均值, 因为最后一次上传大小可能跟前几次不一致
+                    BeanUtils.copyProperties(fileInfo, fileUploadStatus);
                     us.saveFileUploadStatus(fileUploadStatus);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
