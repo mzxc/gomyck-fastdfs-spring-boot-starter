@@ -1,33 +1,14 @@
 ## 开始使用
 
 ### 一.环境配置
-#### 1.在pom文件中加入仓库地址: (后续会有maven中央仓库版本发布)
-```xml
-<repositories>
-    <repository>
-        <id>gomyck-repo</id>
-        <name>Gomyck proxy Ali</name>
-        <url>http://nexus.gomyck.com/nexus/content/repositories/gomyck-repo/</url>
-    </repository>
-    
-    <!-- 快照版本更新频繁, 如不想和作者保持同步, 请删除下面仓库地址并使用release版本: 1.0.1-release -->
-    <repository>
-        <id>gomyck-repo-snapshot</id>
-        <name>Gomyck proxy Ali Snapshot</name>
-        <url>http://nexus.gomyck.com/nexus/content/repositories/gomyck-repo-snapshot/</url>
-        <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-        </snapshots>
-    </repository>
-</repositories>
-```
+#### ~~1.在pom文件中加入仓库地址(已过时):~~  (maven中央仓库版本已发布, 现在可以直接引用啦)
+
 #### 2.在pom文件中加入依赖:
 ```xml
 <dependency>
     <groupId>com.gomyck</groupId>
     <artifactId>gomyck-fastdfs-spring-boot-starter</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2-Release</version>
 </dependency>
 ```
 #### 3.编辑yml文件(以下为全量配置):
@@ -193,10 +174,12 @@ cfd.cancleUpload(file);   //取消指定文件的上传
     
     当然, 你也可以fork master分支代码, 打包后供他人使用(修改后的分支代码, pom文件中的parent请删掉, 并手动指定依赖版本, 否则可能会出现版本不一致问题)
 
+### 1.0.2-Release版本实现:
+> 1. 分块下载(服务端分块写到客户端, 不必等所有文件都加载到服务端内存中在一次性写出)  
+> 2. 断点续传前后端校验(历史上传的块与本次上传的块大小是否一致, 否则会导致修改块大小配置导致上传文件有问题)  
+
 ### 下一版本实现:
-> 1. 分块下载(1.0.2-SNAPSHOT 已实现, 服务端分块写到客户端, 不必等所有文件都加载到服务端内存中在一次性写出)
-> 2. 断点续传(下载)
-> 3. 断点续传前后端校验(历史上传的块与本次上传的块大小是否一致, 否则会导致修改块大小配置导致上传文件有问题)  
-> 4. 文件下载防盗链实现(基于当前服务访问文件)
-> 5. fastdfs token获取(直连文件服务访问文件)   
+> 1. 断点续传(下载)  
+> 2. 文件下载防盗链实现(基于当前服务访问文件)  
+> 3. fastdfs token获取(直连文件服务访问文件)     
 > ......   
