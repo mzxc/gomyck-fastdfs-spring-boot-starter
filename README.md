@@ -3,9 +3,8 @@
 ### 当前MASTER为1.1.0-SNAPSHOT版本
 
 ### 一.环境配置
-#### ~~1.在pom文件中加入仓库地址(已过时):~~  (maven中央仓库版本已发布, 现在可以直接引用啦)
 
-#### 2.在pom文件中加入依赖:
+#### 1.在pom文件中加入依赖:
 ```xml
 <dependency>
     <groupId>com.gomyck</groupId>
@@ -13,7 +12,7 @@
     <version>1.0.2-Release</version>
 </dependency>
 ```
-#### 3.编辑yml文件(以下为全量配置):
+#### 2.编辑yml文件(以下为全量配置):
 ```text
 #单个文件上传大小限制
 spring:
@@ -51,7 +50,7 @@ gomyck:
     file-server-url: 192.168.1.196 #远程文件服务连接地址
 ```
 
-#### 4.在静态资源映射表中加入以下配置
+#### 3.在静态资源映射表中加入以下配置
 ```java
 @Configuration
 public class config extends WebMvcConfigurationSupport {
@@ -65,7 +64,7 @@ public class config extends WebMvcConfigurationSupport {
     }
 }
 ```
-#### 5.启动服务, 访问示例页面: host{:port}/{contextPath/}ck-fastdfs/view/ckFastDFS.html (可以渲染表示环境配置成功)
+#### 4.启动服务, 访问示例页面: host{:port}/{contextPath/}ck-fastdfs/view/ckFastDFS.html (可以渲染表示环境配置成功)
 
 ### 二.开发文档
 
