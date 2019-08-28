@@ -50,7 +50,14 @@
     const cfd = new CkFastDFS({ //全量配置
         baseURI: "../../",
         fastDFSGroup: "group1",
-        uploaderConfig: {},
+        uploaderConfig: {
+            data: {
+                demo: "123"
+            },
+            headers: {
+                Authorization: "GOMYCK"
+            }
+        },
         uploadButton: {
             buttonId: "#btn1",
             multiple: true

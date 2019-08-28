@@ -227,7 +227,9 @@ class CkFastDFS {
             auto: true,
             chunkSize: this.chunkSize,
             chunked: true,
-            threads: 1
+            threads: 1,
+            data: {},
+            headers: {}
             // auto: true
         };
         const finalConfig     = Object.assign({}, webUpLoaderConfig, this.uploaderConfig);
@@ -258,7 +260,9 @@ class CkFastDFS {
                 return _this.uploadListener.beforeAppendFileInQueued(_this.getRefer(file), file);
             });
             //此处是发送给服务端的参数
-            _uploader.on('uploadBeforeSend', function (block, data) {
+            _uploader.on('uploadBeforeSend', function (block, data, headers) {
+                Object.assign(data, _this.uploaderConfig.data);
+                Object.assign(headers, _this.uploaderConfig.headers);
                 const fileId   = _this.uploader.ckId + block.file.id;
                 data.fileMd5   = _this.chunkMap.get(fileId).fileMd5;
                 data.chunkSize = block.blob.size;
@@ -276,8 +280,10 @@ class CkFastDFS {
                     if (result.isOk) {
                         _this.uploadListener.chunkUploadSuccess(_this.getRefer(obj.file), obj.file, result);
                         return true;
+                    }else{
+                        _this.uploadListener.error(_this.SERVER_ERROR, result.resMsg)
+                        return false
                     }
-                    return false
                 } catch (err) {
                     _this.uploadListener.error(_this.SERVER_ERROR, "服务器返回信息错误, 请联系管理员");
                     console.error(err);
@@ -291,6 +297,10 @@ class CkFastDFS {
                 _this.changeProgressBar(_this.getRefer(file), file, 1);
                 try {
                     const result = JSON.parse(response._raw);
+                    if(!result.isOk()){
+                        _this.uploadListener.error(_this.SERVER_ERROR, result.resMsg)
+                        return;
+                    }
                     _this.uploadListener.uploadSuccess(_this.getRefer(file), file, result);
                 } catch (e) {
                     _this.uploadListener.uploadSuccess(_this.getRefer(file), file, {resCode: 201, resMsg: "文件秒传"});
@@ -343,7 +353,9 @@ class CkFastDFS {
      * @param error
      */
     httpPostRequest(url, data, success, error) {
+        if(!!data) data = Object.assign(data, this.uploaderConfig.data);
         $.ajax({
+            headers: this.uploaderConfig.headers,
             type: "POST",
             url: url,
             data: data,
@@ -362,7 +374,9 @@ class CkFastDFS {
      * @param error
      */
     httpGetRequest(url, data, success, error) {
+        if(!!data) data = Object.assign(data, this.uploaderConfig.data);
         $.ajax({
+            headers: this.uploaderConfig.headers,
             type: "GET",
             url: url,
             data: data,
