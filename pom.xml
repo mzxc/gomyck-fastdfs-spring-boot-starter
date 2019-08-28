@@ -29,7 +29,6 @@
         <dependency>
             <groupId>com.github.tobato</groupId>
             <artifactId>fastdfs-client</artifactId>
-            <version>${com.github.tobato.fastdfs}</version>
         </dependency>
 
         <dependency>
