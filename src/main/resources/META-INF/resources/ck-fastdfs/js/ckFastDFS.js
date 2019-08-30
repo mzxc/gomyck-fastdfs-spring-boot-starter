@@ -297,7 +297,7 @@ class CkFastDFS {
                 _this.changeProgressBar(_this.getRefer(file), file, 1);
                 try {
                     const result = JSON.parse(response._raw);
-                    if(!result.isOk()){
+                    if(!result.isOk){
                         _this.uploadListener.error(_this.SERVER_ERROR, result.resMsg)
                         return;
                     }
