@@ -16,6 +16,9 @@
     </style>
 </head >
 <body >
+
+<input type="hidden" id="contextPath" value="/" />
+
 <div >
     <div >
         <button id="btn1" class="upBtn" >点击上传1</button >
@@ -47,8 +50,10 @@
 
     //以下配置展示了多种情况的实例化方式, 请仔细阅读注释
 
+    const baseUri = $.ckGetContext();
+
     const cfd = new CkFastDFS({ //全量配置
-        baseURI: "../../",
+        baseURI: baseUri,
         fastDFSGroup: "group1",
         uploaderConfig: {
             data: {
@@ -107,7 +112,7 @@
     cfd.addButton("#btn2"); //通过实例添加按钮
 
     const cfd2 = new CkFastDFS({ //如果需要上传不同的服务器或分组, 重新实例化也是完全没问题的
-        baseURI: "../../",
+        baseURI: baseUri,
         fastDFSGroup: "group2",
         uploaderConfig: {},
         uploadButton: {
@@ -125,7 +130,7 @@
     //-----------------------------------CKFASTDFS配置结束---------------------------------------------------------------
 
     $.ajax({
-        url: "../../upload/manage/list",
+        url: baseUri + "/upload/manage/list",
         type: "get",
         dataType: "json",
         success: function (data) {
@@ -145,8 +150,9 @@
                     <td class="text-center text-muted" style="vertical-align: middle;"><span>${_temp.uploadTime}</span></td >
                     <td class="text-center text-muted" style="vertical-align: middle;">
                         <a target="_blank" href="${data.resData.fileServerUrl}/${_temp.group}/${_temp.uploadPath}" >查看</a >
-                        <a target="_blank" download href="../../download/chunkDownload/downloadFile?fileMd5=${_temp.fileMd5}" >下载</a >
+                        <a target="_blank" download href="${baseUri}/download/chunkDownload/downloadFile?fileMd5=${_temp.fileMd5}" >下载</a >
                         <a class="del" fileMd5="${_temp.fileMd5}" >删除</a >
+                        <a class="batchDownload" fileMd5="${_temp.fileMd5}" >批量下载</a >
                     </td >
                 </tr >`;
                 $("#resTable").append(tds);
@@ -159,7 +165,7 @@
         $('.del').click(function () {
             const self = $(this);
             if (window.confirm("确定要删除吗")) {
-                $.post('../../upload/manage/delFile', {fileMd5: self.attr('fileMd5')}, function (data) {
+                $.post(baseUri + '/upload/manage/delFile', {fileMd5: self.attr('fileMd5')}, function (data) {
                     if (data.isOk) {
                         location.reload();
                     } else {
@@ -167,6 +173,15 @@
                     }
                 })
             }
+        });
+
+        //这是个例子
+        $(".batchDownload").click(function () {
+            const self = $(this);
+            $.ckPostToNewView(baseUri + "/download/chunkDownload/batchDownloadFileHasGroup",{
+                'files[0].fileMd5': self.attr('fileMd5'),
+                'files[0].zipSrc': "/demo/"
+            });
         });
     }
 
