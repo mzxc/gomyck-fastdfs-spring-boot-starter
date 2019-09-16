@@ -295,16 +295,12 @@ class CkFastDFS {
             });
             _uploader.on('uploadSuccess', function (file, response) {
                 _this.changeProgressBar(_this.getRefer(file), file, 1);
-                try {
-                    const result = JSON.parse(response._raw);
-                    if(!result.isOk){
-                        _this.uploadListener.error(_this.SERVER_ERROR, result.resMsg)
-                        return;
-                    }
-                    _this.uploadListener.uploadSuccess(_this.getRefer(file), file, result);
-                } catch (e) {
-                    _this.uploadListener.uploadSuccess(_this.getRefer(file), file, {resCode: 201, resMsg: "文件秒传"});
+                const result = JSON.parse(response._raw);
+                if(!result.isOk){
+                    _this.uploadListener.error(_this.SERVER_ERROR, result.resMsg)
+                    return;
                 }
+                _this.uploadListener.uploadSuccess(_this.getRefer(file), file, result);
 
             });
             _uploader.on('uploadComplete', function (file) {
