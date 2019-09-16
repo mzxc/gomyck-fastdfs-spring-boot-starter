@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2019 gomyck
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.gomyck.fastdfs.starter.controller;
 
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
@@ -16,13 +38,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -30,7 +52,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author gomyck QQ:474798383
  * @version [版本号/1.0]
- *
+ * @see [相关类/方法]
  * @since [2019-07-28]
  */
 @Controller
@@ -43,7 +65,7 @@ public class ChunkDownloadHandler {
     @Autowired
     FastFileStorageClient ffsc;
 
-    @Autowired(required = false)
+    @Autowired
     UploadService us;
 
     @Value("${gomyck.fastdfs.download-chunk-size: 1000000}")
@@ -110,13 +132,15 @@ public class ChunkDownloadHandler {
     @GetMapping("batchDownloadFile")
     @ResponseBody
     public void chunkDownload4Batch(String[] fileMd5s) {
-        List<BatchDownLoadParameter> list = new ArrayList<>();
+        BatchDownLoadParameter bdlp = new BatchDownLoadParameter();
+        ArrayList<BatchDownLoadParameter.FileBatchDownload> list = new ArrayList<>();
         Stream.of(fileMd5s).forEach(e -> {
-            BatchDownLoadParameter bdl = new BatchDownLoadParameter();
+            BatchDownLoadParameter.FileBatchDownload bdl = new BatchDownLoadParameter.FileBatchDownload();
             bdl.setFileMd5(e);
             list.add(bdl);
         });
-        chunkDownload4BatchHasGroup(list);
+        bdlp.setFiles(list);
+        chunkDownload4BatchHasGroup(bdlp);
     }
 
 
@@ -130,17 +154,17 @@ public class ChunkDownloadHandler {
      *                     zipSrc: 文件在压缩包中的路径 exp: /demo/xxx/gomyck/  前后的 / 不可少
      *                     fileName: 文件名称, 如果为空, 则取文件服务器内的文件名
      */
-    @GetMapping("batchDownloadFileHasGroup")
+    @PostMapping("batchDownloadFileHasGroup")
     @ResponseBody
-    public void chunkDownload4BatchHasGroup(List<BatchDownLoadParameter> downloadInfo) {
-        if (downloadInfo == null || downloadInfo.size() < 1) throw new IllegalParameterException("非法的参数");
+    public void chunkDownload4BatchHasGroup(BatchDownLoadParameter downloadInfo) {
+        if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
         HttpServletResponse response = ResponseWriter.getResponse();
         try {
             response.setHeader("Content-Disposition", "attachment; filename=" + ResponseWriter.fileNameWrapper("归档.zip"));
             response.setContentType(ResponseWriter.ContextType.ZIP.getTypeValue());
             ServletOutputStream outputStream = response.getOutputStream();
             ZipOutputStream zos = new ZipOutputStream(outputStream);
-            for (BatchDownLoadParameter bdl : downloadInfo) {
+            for (BatchDownLoadParameter.FileBatchDownload bdl : downloadInfo.getFiles()) {
                 DownloadByteArray callback = new DownloadByteArray();
                 CkFileInfo fileInfo = us.getFileByMessageDigest(bdl.getFileMd5());
                 if (fileInfo == null) {

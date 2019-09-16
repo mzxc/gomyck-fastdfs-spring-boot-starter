@@ -1,5 +1,27 @@
 
 
+/*
+ * Copyright (c) 2019 gomyck
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.gomyck.fastdfs.starter.controller;
 
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
@@ -88,10 +110,6 @@ public class ChunkUploadHandler {
                 String chunk = fileUploadStatus.getChunk();
                 if(StringJudge.notNull(chunk)){
                     hasUploadChunk = Integer.parseInt(chunk);
-                    //如果上传的块大于0 那么代表有过上传, 如果前端的块大小配置改变, 那么会导致上传文件异常
-                    if(!fileUploadStatus.getChunks().equals(fileInfo.getChunks())){
-                        return R.error(R._500, "文件块大小已更改, 请联系管理员");
-                    }
                 }
             }else{
                 fileUploadStatus = new CkFileInfo();
@@ -128,9 +146,7 @@ public class ChunkUploadHandler {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
                         }
                     }
-                    // 把本次传入的参数copy到历史数据中, 然后更新, 这里的copy会把最后一次上传的块大小也copy
-                    // 所以chunksize记录的是最后一次上传的块大小, 并不代表平均值, 因为最后一次上传大小可能跟前几次不一致
-                    BeanUtils.copyProperties(fileInfo, fileUploadStatus);
+                    BeanUtils.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
                     us.saveFileUploadStatus(fileUploadStatus);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {

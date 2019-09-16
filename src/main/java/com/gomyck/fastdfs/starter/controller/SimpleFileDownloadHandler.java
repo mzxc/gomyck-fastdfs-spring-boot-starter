@@ -1,3 +1,25 @@
+/*
+ * Copyright (c) 2019 gomyck
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.gomyck.fastdfs.starter.controller;
 
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
@@ -25,7 +47,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author gomyck QQ:474798383
  * @version [版本号/1.0]
- *
+ * @see [相关类/方法]
  * @since [2019-07-30]
  */
 @Controller
@@ -35,7 +57,7 @@ public class SimpleFileDownloadHandler {
     @Autowired
     FastFileStorageClient ffsc;
 
-    @Autowired(required = false)
+    @Autowired
     UploadService us;
 
     /**
@@ -47,6 +69,7 @@ public class SimpleFileDownloadHandler {
      *
      */
     @GetMapping("downloadFile")
+    @ResponseBody
     public void simpleDownload(String fileMd5) {
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
         if (fileInfo == null) throw new FileNotFoundException("数据列表中不存在该文件");
@@ -67,13 +90,15 @@ public class SimpleFileDownloadHandler {
     @GetMapping("batchDownloadFile")
     @ResponseBody
     public void simpleBatchDownload(String[] fileMd5s) {
-        List<BatchDownLoadParameter> list = new ArrayList<>();
+        BatchDownLoadParameter bdlp = new BatchDownLoadParameter();
+        List<BatchDownLoadParameter.FileBatchDownload> list = new ArrayList<>();
         Stream.of(fileMd5s).forEach(e -> {
-            BatchDownLoadParameter bdl = new BatchDownLoadParameter();
+            BatchDownLoadParameter.FileBatchDownload bdl = new BatchDownLoadParameter.FileBatchDownload();
             bdl.setFileMd5(e);
             list.add(bdl);
         });
-        simpleBatchDownloadHasGroup(list);
+        bdlp.setFiles(list);
+        simpleBatchDownloadHasGroup(bdlp);
     }
 
 
@@ -88,12 +113,13 @@ public class SimpleFileDownloadHandler {
      *                     fileName: 文件名称, 如果为空, 则取文件服务器内的文件名
      */
     @GetMapping("batchDownloadFileHasGroup")
-    public void simpleBatchDownloadHasGroup(List<BatchDownLoadParameter> downloadInfo) {
-        if (downloadInfo == null || downloadInfo.size() < 1) throw new IllegalParameterException("非法的参数");
+    @ResponseBody
+    public void simpleBatchDownloadHasGroup(BatchDownLoadParameter downloadInfo) {
+        if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ZipOutputStream zos = new ZipOutputStream(outputStream);
-            for (BatchDownLoadParameter bdl : downloadInfo) {
+            for (BatchDownLoadParameter.FileBatchDownload bdl : downloadInfo.getFiles()) {
                 CkFileInfo fileInfo = us.getFileByMessageDigest(bdl.getFileMd5());
                 if (fileInfo == null) continue;
                 DownloadByteArray callback = new DownloadByteArray();
