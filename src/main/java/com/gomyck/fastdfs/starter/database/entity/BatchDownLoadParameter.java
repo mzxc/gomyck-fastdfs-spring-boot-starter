@@ -29,8 +29,7 @@ import java.util.List;
 
 /**
  * @author gomyck QQ:474798383
- * @version [版本号/1.0]
- * @see [相关类/方法]
+ * @version [1.0]
  * @since [2019-08-06]
  */
 @Data
