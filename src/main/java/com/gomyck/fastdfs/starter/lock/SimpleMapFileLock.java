@@ -44,7 +44,7 @@ public class SimpleMapFileLock extends ConcurrentHashMap<String, Integer> implem
     }
 
     @Override
-    public synchronized boolean ifLock(String fileKey) {
+    public boolean ifLock(String fileKey) {
         try{
             rl.lock();
             Integer integer = get(fileKey);
