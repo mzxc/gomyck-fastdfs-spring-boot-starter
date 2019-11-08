@@ -31,6 +31,8 @@ import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.ResponseWriter;
 import com.gomyck.util.StringJudge;
+import feign.Response;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -77,6 +78,31 @@ public class SimpleFileDownloadHandler {
         ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
     }
 
+
+    /**
+     * 对 feign 调用的服务支持
+     *
+     * @param fileMd5 文件摘要信息
+     *
+     */
+    @GetMapping("downloadFile4Feign")
+    @ResponseBody
+    public Response chunkDownload4Feign(String fileMd5) {
+        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
+        if (fileInfo == null) throw new FileNotFoundException("数据列表中不存在该文件");
+        DownloadByteArray callback = new DownloadByteArray();
+        byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
+
+        Map<String, Collection<String>> header = new HashMap<>();
+        header.put("Content-Disposition", Arrays.asList("filename=" + ResponseWriter.fileNameWrapper(fileInfo.getName())));
+        header.put("Content-Type", Arrays.asList(fileInfo.getType(), "charset=utf-8"));
+        return Response.builder()
+                       .headers(header)
+                       .body(content)
+                       .status(HttpStatus.SC_OK)
+                       .build();
+
+    }
 
     /**
      * 文件批量下载
