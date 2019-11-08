@@ -80,31 +80,6 @@ public class SimpleFileDownloadHandler {
 
 
     /**
-     * 对 feign 调用的服务支持
-     *
-     * @param fileMd5 文件摘要信息
-     *
-     */
-    @GetMapping("downloadFile4Feign")
-    @ResponseBody
-    public Response chunkDownload4Feign(String fileMd5) {
-        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if (fileInfo == null) throw new FileNotFoundException("数据列表中不存在该文件");
-        DownloadByteArray callback = new DownloadByteArray();
-        byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
-
-        Map<String, Collection<String>> header = new HashMap<>();
-        header.put("Content-Disposition", Arrays.asList("filename=" + ResponseWriter.fileNameWrapper(fileInfo.getName())));
-        header.put("Content-Type", Arrays.asList(fileInfo.getType(), "charset=utf-8"));
-        return Response.builder()
-                       .headers(header)
-                       .body(content)
-                       .status(HttpStatus.SC_OK)
-                       .build();
-
-    }
-
-    /**
      * 文件批量下载
      *
      * 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
