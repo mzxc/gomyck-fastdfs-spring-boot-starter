@@ -141,7 +141,9 @@ public class ChunkUploadHandler {
                     } else {
                         fileUploadStatus = us.getFileUploadStatus(fileInfo.getFileMd5());
                         try {
-                            appendFileStorageClient.modifyFile(fileUploadStatus.getGroup(), fileUploadStatus.getUploadPath(), file.getInputStream(), file.getSize(), (hasUploadChunk + 1) * fileInfo.getChunkSize());
+                            //appendFileStorageClient.modifyFile(fileUploadStatus.getGroup(), fileUploadStatus.getUploadPath(), file.getInputStream(), file.getSize(), (hasUploadChunk + 1) * fileInfo.getChunkSize());
+                            //todo 修复丢失字节的 BUG
+                            appendFileStorageClient.appendFile(fileUploadStatus.getGroup(), fileUploadStatus.getUploadPath(), file.getInputStream(), file.getSize());
                         } catch (Exception e) {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
                         }
