@@ -37,7 +37,7 @@ class CkFastDFS {
         this.fastDFSGroup  = option.fastDFSGroup || "";
 
         /**
-         * WebUpLoader配置
+         * WebUpLoader配置 参照 webUpLoaderConfig
          */
         this.uploaderConfig = option.uploaderConfig;
         /**
@@ -54,7 +54,7 @@ class CkFastDFS {
          */
         this.uploadProgressBar = null;
         /**
-         * 上传监听
+         * 上传监听 参照 initUploaderListener()
          */
         this.uploadListener = null;
         this.uploaderStatus = $.Deferred();
@@ -227,6 +227,7 @@ class CkFastDFS {
             auto: true,
             chunkSize: this.chunkSize,
             chunked: true,
+            fileSingleSizeLimit: this.maxFileSize,
             threads: 1,
             data: {},
             headers: {}
@@ -236,7 +237,7 @@ class CkFastDFS {
         const _this           = this;
         this.loadServerConfig(function () {
             finalConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
-            finalConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
+            finalConfig.chunkSize           = _this.chunkSize;   //从服务器读取的单个文件上传限制
             _this.uploader                  = WebUploader.create(finalConfig);
             _this.uploader.ckId             = uploaderId;
             _this.uploader.ckInstance       = _this;
