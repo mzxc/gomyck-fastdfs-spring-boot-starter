@@ -139,7 +139,7 @@ public class ChunkDownloadHandler {
             list.add(bdl);
         });
         bdlp.setFiles(list);
-        chunkDownload4BatchHasGroup(bdlp);
+        batchDownloadFileHasGroup(bdlp);
     }
 
 
@@ -155,7 +155,7 @@ public class ChunkDownloadHandler {
      */
     @PostMapping("batchDownloadFileHasGroup")
     @ResponseBody
-    public void chunkDownload4BatchHasGroup(BatchDownLoadParameter downloadInfo) {
+    public void batchDownloadFileHasGroup(BatchDownLoadParameter downloadInfo) {
         if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
         HttpServletResponse response = ResponseWriter.getResponse();
         try {
