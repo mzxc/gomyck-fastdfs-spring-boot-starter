@@ -1,6 +1,6 @@
 ## 开始使用 
 
-### 当前MASTER为1.1.0-SNAPSHOT版本
+### 当前MASTER为1.1.2-SNAPSHOT版本
 
 ### 一.环境配置
 
@@ -9,7 +9,7 @@
 <dependency>
     <groupId>com.gomyck</groupId>
     <artifactId>gomyck-fastdfs-spring-boot-starter</artifactId>
-    <version>1.0.2-Release</version>
+    <version>1.1.1-Release</version>
 </dependency>
 ```
 #### 2.编辑yml文件(以下为全量配置):
