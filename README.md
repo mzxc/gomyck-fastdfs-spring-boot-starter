@@ -9,7 +9,7 @@
 <dependency>
     <groupId>com.gomyck</groupId>
     <artifactId>gomyck-fastdfs-spring-boot-starter</artifactId>
-    <version>1.1.1-Release</version>
+    <version>1.1.1-RELEASE</version>
 </dependency>
 ```
 #### 2.编辑yml文件(以下为全量配置):
