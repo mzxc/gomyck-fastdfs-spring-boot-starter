@@ -128,7 +128,7 @@ public class ChunkUploadHandler {
                 try {
                     if (currentChunk == 0) {
                         try {
-                            path = appendFileStorageClient.uploadAppenderFile(fileInfo.getGroup(), file.getInputStream(), file.getSize(), FileUtils.extName(fileInfo.getName()));
+                            path = appendFileStorageClient.uploadAppenderFile(fileInfo.getGroup(), file.getInputStream(), file.getSize(), FileUtil.getFileSuffixNameByFileName(fileInfo.getName()));
                             if (path == null) {
                                 return R.error(R._500, "文件服务器未返回存储路径, 请联系管理员");
                             }
@@ -148,11 +148,11 @@ public class ChunkUploadHandler {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
                         }
                     }
-                    BeanUtils.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
+                    BeanUtil.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
                     us.saveFileUploadStatus(fileUploadStatus);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
-                        fileUploadStatus.setUploadTime(DateUtils.now2Str(DateUtils.DUF.CN_DATETIME_FORMAT));
+                        fileUploadStatus.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT));
                         us.saveUploadInfo(fileUploadStatus);
                         us.delFileUploadStatus(fileUploadStatus.getFileMd5());
                     }

@@ -29,6 +29,7 @@ import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
+import com.gomyck.util.CkContentType;
 import com.gomyck.util.ResponseWriter;
 import com.gomyck.util.StringJudge;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +132,7 @@ public class SimpleFileDownloadHandler {
             zos.finish();
             zos.close();
             byte[] bytes = outputStream.toByteArray();
-            ResponseWriter.writeFile(bytes, "归档", ResponseWriter.ContextType.ZIP);
+            ResponseWriter.writeFile(bytes, "归档", CkContentType.ZIP);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

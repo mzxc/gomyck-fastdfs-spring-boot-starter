@@ -30,6 +30,7 @@ import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
+import com.gomyck.util.CkContentType;
 import com.gomyck.util.ResponseWriter;
 import com.gomyck.util.StringJudge;
 import org.slf4j.Logger;
@@ -160,7 +161,7 @@ public class ChunkDownloadHandler {
         HttpServletResponse response = ResponseWriter.getResponse();
         try {
             response.setHeader("Content-Disposition", "attachment; filename=" + ResponseWriter.fileNameWrapper("归档.zip"));
-            response.setContentType(ResponseWriter.ContextType.ZIP.getTypeValue());
+            response.setContentType(CkContentType.ZIP.getTypeValue());
             ServletOutputStream outputStream = response.getOutputStream();
             ZipOutputStream zos = new ZipOutputStream(outputStream);
             for (BatchDownLoadParameter.FileBatchDownload bdl : downloadInfo.getFiles()) {
