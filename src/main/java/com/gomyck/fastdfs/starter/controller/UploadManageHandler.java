@@ -29,7 +29,7 @@ import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
-import com.gomyck.util.ParaUtils;
+import com.gomyck.util.ParamUtil;
 import com.gomyck.util.R;
 import com.gomyck.util.StringJudge;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class UploadManageHandler {
     @ResponseBody
     public R uploadListNoPage() {
         ServiceCheck.uploadServiceCheck(us);
-        Map<String, Object> stringObjectMap = ParaUtils.initParams();
+        Map<String, Object> stringObjectMap = ParamUtil.initParams();
         stringObjectMap.put("fileServerUrl", fsp.getFileServerURI());
         stringObjectMap.put("fileList", us.selectCompleteFileInfo());
         return R.ok(stringObjectMap);
