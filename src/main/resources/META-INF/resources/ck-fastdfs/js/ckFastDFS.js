@@ -39,7 +39,7 @@ class CkFastDFS {
         /**
          * WebUpLoader配置 参照 webUpLoaderConfig
          */
-        this.uploaderConfig = option.uploaderConfig;
+    this.uploaderConfig = option.uploaderConfig || {};
         /**
          * 上传按钮
          *
@@ -211,7 +211,7 @@ class CkFastDFS {
         const uploadURLString = this.uploadURI;
         let webUpLoaderConfig = {
             swf: this.baseURI + "/ck-fastdfs/swf/Uploader.swf",
-            pick: {id: this.uploadButton.buttonId, multiple: this.uploadButton.multiple | false}, //按钮的ID
+            pick: { id: this.uploadButton.buttonId, multiple: this.uploadButton.multiple | this.uploadButton.directory | false, directory: this.uploadButton.directory | false }, //按钮的ID
             server: uploadURLString,
             accept: {
                 title: '支持的文件类型',
