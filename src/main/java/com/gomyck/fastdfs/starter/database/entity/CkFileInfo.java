@@ -32,7 +32,7 @@ public class CkFileInfo {
 
     private Long chunkSize; //每块文件的大小
 
-    private Long expireTime;
+    private Long expireTime; //过期时间, 以秒为单位
 
     public Long getExpireTime() {
         return expireTime;
