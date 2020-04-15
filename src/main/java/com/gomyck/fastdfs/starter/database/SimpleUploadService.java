@@ -28,9 +28,12 @@ public class SimpleUploadService implements UploadService {
     public R saveUploadInfo(CkFileInfo fileInfo) {
         //持久化上传完成文件,也可以存储在mysql中
         rs.startDoIt();
-        String _fileInfo = JSONObject.toJSONString(fileInfo);
-        rs.lpush(Constant.COMPLETED_LIST, _fileInfo);
-        rs.hSet(Constant.COMPLETED_MAP, fileInfo.getFileMd5(), _fileInfo);
+        rs.oneTime(e -> {
+            String _fileInfo = JSONObject.toJSONString(fileInfo);
+            e.lpush(Constant.COMPLETED_LIST, _fileInfo);
+            e.hset(Constant.COMPLETED_MAP, fileInfo.getFileMd5(), _fileInfo);
+            return true;
+        });
         rs.finishDoIt();
         return null;
     }
@@ -50,9 +53,34 @@ public class SimpleUploadService implements UploadService {
 
     @Override
     public R delFile(CkFileInfo fileInfo) {
-        rs.startDoIt();
-        rs.delListNode(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(fileInfo));
-        rs.hDel(Constant.COMPLETED_MAP, fileInfo.getFileMd5());
+        rs.startDoIt(2);
+        rs.oneTime(e -> {
+            e.lrem(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(fileInfo));
+            e.hdel(Constant.COMPLETED_MAP, fileInfo.getFileMd5());
+            return true;
+        });
+        rs.finishDoIt();
+        return R.ok();
+    }
+
+    @Override
+    public R delExpireStatus(CkFileInfo messageDigest, boolean completeStatus) {
+        rs.startDoIt(2);
+        rs.oneTime(e -> {
+            if(completeStatus){
+                e.lrem(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(messageDigest));
+                e.hdel(Constant.COMPLETED_MAP, messageDigest.getFileMd5());
+                messageDigest.setExpireTime(null);
+                String _fileInfo = JSONObject.toJSONString(messageDigest);
+                e.lpush(Constant.COMPLETED_LIST, _fileInfo);
+                e.hset(Constant.COMPLETED_MAP, messageDigest.getFileMd5(), _fileInfo);
+            }else{
+                e.del(Constant.FILE_INFO + messageDigest.getFileMd5());
+                messageDigest.setExpireTime(null);
+                e.set(Constant.FILE_INFO + messageDigest.getFileMd5(), JSONObject.toJSONString(messageDigest));
+            }
+            return true;
+        });
         rs.finishDoIt();
         return R.ok();
     }

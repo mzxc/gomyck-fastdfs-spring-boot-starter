@@ -68,7 +68,7 @@ public class FileCleanTask {
 
     Logger log = LoggerFactory.getLogger(FileCleanTask.class);
 
-    @Scheduled(cron = "0/2 * * * * *")
+    @Scheduled(cron = "* 0/30 * * * *")
     @RedisManager
     public void cleanTempFile(){
         String expireFile = null;
@@ -102,7 +102,6 @@ public class FileCleanTask {
         }
         log.info("==========开始清理 临时 列表==========");
         doClean(expireFile);
-
     }
 
     private void doClean(String expireFile) {

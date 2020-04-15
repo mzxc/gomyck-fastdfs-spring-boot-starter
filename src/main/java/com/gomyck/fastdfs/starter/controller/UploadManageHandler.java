@@ -127,5 +127,20 @@ public class UploadManageHandler {
         return R.ok();
     }
 
+    @PostMapping(value = "/delExpireStatus")
+    @ResponseBody
+    public R delExpireStatus(@RequestBody String fileMd5) {
+        boolean completeStatus = false;
+        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
+        if(fileInfo == null) {
+            fileInfo = us.getFileUploadStatus(fileMd5);
+        }else{
+            completeStatus = true;
+        }
+        if(fileInfo == null) return R.error(R._500, "文件服务器不存在该文件");
+        us.delExpireStatus(fileInfo, completeStatus);
+        return R.ok();
+    }
+
 }
 

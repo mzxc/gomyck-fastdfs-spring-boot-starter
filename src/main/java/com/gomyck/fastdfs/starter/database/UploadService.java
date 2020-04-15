@@ -31,11 +31,18 @@ public interface UploadService {
 
     /**
      * 删除文件(单个, 从已完成列表中删除)
-     * @param messageDigest 摘要
+     * @param fileInfo 文件信息
      * @return R 消息实体
      */
-    R delFile(CkFileInfo messageDigest);
+    R delFile(CkFileInfo fileInfo);
 
+
+    /**
+     * 设置文件过期时间为从不
+     * @param fileInfo 文件信息
+     * @return R 消息实体
+     */
+    R delExpireStatus(CkFileInfo fileInfo, boolean completeStatus);
 
     /**
      * 根据摘要, 获取文件信息(已完成列表中获取)
