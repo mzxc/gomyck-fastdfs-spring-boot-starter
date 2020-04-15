@@ -32,6 +32,16 @@ public class CkFileInfo {
 
     private Long chunkSize; //每块文件的大小
 
+    private Long expireTime;
+
+    public Long getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(Long expireTime) {
+        this.expireTime = expireTime;
+    }
+
     public String getId() {
         return id;
     }

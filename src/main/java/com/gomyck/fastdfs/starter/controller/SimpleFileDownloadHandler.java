@@ -132,7 +132,7 @@ public class SimpleFileDownloadHandler {
             zos.finish();
             zos.close();
             byte[] bytes = outputStream.toByteArray();
-            ResponseWriter.writeFile(bytes, "归档", CkContentType.ZIP);
+            ResponseWriter.writeFile(bytes, downloadInfo.getZipFileName() + ".zip", CkContentType.ZIP);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

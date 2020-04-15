@@ -85,6 +85,8 @@ public class ChunkUploadHandler {
     @ResponseBody
     public R uploadFile(CkFileInfo fileInfo, HttpServletRequest request) {
         ServiceCheck.uploadServiceCheck(us);
+        R checkInfo = this.checkFile(fileInfo.getFileMd5());
+        if(!checkInfo.isOk() || R._302 == checkInfo.getResCode()) return checkInfo;
         boolean ifHasLock = false;
         String fileLock = Constant.FILE_LOCK + fileInfo.getFileMd5();
         if (StringJudge.isNull(fileInfo.getChunk())) fileInfo.setChunk("0");
@@ -136,6 +138,7 @@ public class ChunkUploadHandler {
                             e.printStackTrace();
                             return R.error(R._500, "上传远程服务器文件出错" + e.getMessage());
                         }
+                        fileInfo.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT));
                         fileInfo.setGroup(fileInfo.getGroup());
                         fileInfo.setUploadPath(path.getPath());
                     } else {

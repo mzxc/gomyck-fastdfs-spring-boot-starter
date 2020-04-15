@@ -31,6 +31,7 @@ import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.CkContentType;
+import com.gomyck.util.FileUtil;
 import com.gomyck.util.ResponseWriter;
 import com.gomyck.util.StringJudge;
 import org.slf4j.Logger;
@@ -79,9 +80,10 @@ public class ChunkDownloadHandler {
      */
     @GetMapping("downloadFile")
     @ResponseBody
-    public void chunkDownload(String fileMd5) {
+    public void chunkDownload(String fileMd5, String fileName) {
         DownloadByteArray callback = new DownloadByteArray();
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
+        if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         if (fileInfo == null) {
             logger.error("从数据库查询文件信息出错, 文件MD5: {}", fileMd5);
             throw new FileNotFoundException("数据列表中不存在该文件");
@@ -160,7 +162,7 @@ public class ChunkDownloadHandler {
         if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
         HttpServletResponse response = ResponseWriter.getResponse();
         try {
-            response.setHeader("Content-Disposition", "attachment; filename=" + ResponseWriter.fileNameWrapper("归档.zip"));
+            response.setHeader("Content-Disposition", "attachment; filename=" + ResponseWriter.fileNameWrapper(downloadInfo.getZipFileName() + ".zip"));
             response.setContentType(CkContentType.ZIP.getTypeValue());
             ServletOutputStream outputStream = response.getOutputStream();
             ZipOutputStream zos = new ZipOutputStream(outputStream);

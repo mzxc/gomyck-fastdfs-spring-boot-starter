@@ -35,6 +35,8 @@ import java.util.List;
 @Data
 public class BatchDownLoadParameter {
 
+    private String zipFileName = "归档"; //压缩包文件名
+
     private List<FileBatchDownload> files = new ArrayList<>();
 
     @Data
