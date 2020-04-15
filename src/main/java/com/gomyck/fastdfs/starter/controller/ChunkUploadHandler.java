@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,9 +70,10 @@ public class ChunkUploadHandler {
     @Autowired
     FileLock fl;
 
+    private final static String FILE_PARAM_NAME = "file";
 
     //获取配置
-    @RequestMapping("/config")
+    @GetMapping("/config")
     @ResponseBody
     public R config() {
         Map<String, Object> stringObjectMap = ParamUtil.initParams();
@@ -106,7 +108,7 @@ public class ChunkUploadHandler {
             }else{
                 ifHasLock = true;
             }
-            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+            List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles(FILE_PARAM_NAME);
             Integer hasUploadChunk = 0; //查询当前文件存储到第几块了
             if(fileUploadStatus != null){
                 String chunk = fileUploadStatus.getChunk();
@@ -136,7 +138,7 @@ public class ChunkUploadHandler {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            return R.error(R._500, "上传远程服务器文件出错" + e.getMessage());
+                            return R.error(R._500, "上传文件服务器文件出错" + e.getMessage());
                         }
                         fileInfo.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT));
                         fileInfo.setGroup(fileInfo.getGroup());
@@ -160,7 +162,7 @@ public class ChunkUploadHandler {
                         us.delFileUploadStatus(fileUploadStatus.getFileMd5());
                     }
                 } catch (Exception e) {
-                    return R.error(R._500, "上传错误 " + e.getMessage());
+                    return R.error(R._500, "上传错误: " + e.getMessage());
                 }
                 break;
             }

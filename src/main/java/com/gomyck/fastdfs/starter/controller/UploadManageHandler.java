@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -85,7 +86,7 @@ public class UploadManageHandler {
             return R.error(R._500, "文件服务器不存在该文件");
         }
         try{
-            storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + "/", ""));
+            storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + File.separator, ""));
         }catch (Exception e){
             e.printStackTrace();
             return R.error(R._500, e.getMessage());
@@ -104,23 +105,24 @@ public class UploadManageHandler {
             return R.error(R._500, "文件服务器不存在该文件");
         }
         Stream.of(fileMd5s.split(",")).forEach(fileMd5 -> {
-            CkFileInfo fileInfo = new CkFileInfo();
+            CkFileInfo fileInfo= null;
             for (CkFileInfo e : fileInfos) {
                 if (fileMd5.equals(e.getFileMd5())) {
                     fileInfo = e;
                     break;
                 }
             }
-            if(StringJudge.isNull(fileInfo.getUploadPath())){
-                return;
-            }
+            if(fileInfo == null) fileInfo = us.getFileUploadStatus(fileMd5);
+            if(fileInfo == null) return;
+            if(StringJudge.isNull(fileInfo.getUploadPath())) return;
             try{
-                storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + "/", ""));
+                storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + File.separator, ""));
             }catch (Exception e){
                 e.printStackTrace();
                 return;
             }
             us.delFile(fileInfo);
+            us.delFileUploadStatus(fileMd5);
         });
         return R.ok();
     }

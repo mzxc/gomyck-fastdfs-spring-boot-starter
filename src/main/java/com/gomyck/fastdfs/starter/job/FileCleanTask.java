@@ -27,10 +27,12 @@
 package com.gomyck.fastdfs.starter.job;
 
 import com.gomyck.cache.redis.starter.core.redis.RedisCache;
+import com.gomyck.cache.redis.starter.core.redis.annotation.RedisManager;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.controller.UploadManageHandler;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
+import com.gomyck.util.CkDateUtil;
 import com.gomyck.util.R;
 import com.gomyck.util.StringJudge;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,50 +68,49 @@ public class FileCleanTask {
 
     Logger log = LoggerFactory.getLogger(FileCleanTask.class);
 
-    @Scheduled(cron = "* 0/1 * * * *")
+    @Scheduled(cron = "0/2 * * * * *")
+    @RedisManager
     public void cleanTempFile(){
-
+        String expireFile = null;
         List<CkFileInfo> ckFileInfos = uploadService.selectCompleteFileInfo();
-
-        String expireFile = ckFileInfos.stream().filter(e -> {
-            Long expireTime = e.getExpireTime();
-            if (expireTime == null) {
-                return false;
-            } else {
-                LocalDateTime createTime = LocalDateTime.parse(e.getUploadTime());
-                return createTime.plusSeconds(expireTime).isAfter(LocalDateTime.now());
-            }
-        }).map(CkFileInfo::getFileMd5).collect(Collectors.joining(","));
-
-        if(StringJudge.isNull(expireFile)) {
-            log.info("==============================================");
-            log.info("==========清理结束, 暂无可清理的过期文件==========");
-            log.info("==============================================");
-            return;
+        if(ckFileInfos != null && ckFileInfos.size() > 0){
+            expireFile = ckFileInfos.stream().filter(e -> {
+                Long expireTime = e.getExpireTime();
+                if (expireTime == null) {
+                    return false;
+                } else {
+                    LocalDateTime createTime = LocalDateTime.parse(e.getUploadTime(), DateTimeFormatter.ofPattern(CkDateUtil.DUF.CN_DATETIME_FORMAT));
+                    return createTime.plusSeconds(expireTime).isBefore(LocalDateTime.now());
+                }
+            }).map(CkFileInfo::getFileMd5).collect(Collectors.joining(","));
         }
         log.info("==========开始清理 已完成 列表==========");
         doClean(expireFile);
+
         Set<String> keys = rc.keysPattern(Constant.FILE_INFO + "*");
-        expireFile = keys.stream().filter(e -> {
-            CkFileInfo fileUploadStatus = uploadService.getFileUploadStatus(e);
-            Long expireTime = fileUploadStatus.getExpireTime();
-            if (expireTime == null) {
-                return false;
-            } else {
-                LocalDateTime createTime = LocalDateTime.parse(fileUploadStatus.getUploadTime());
-                return createTime.plusSeconds(expireTime).isAfter(LocalDateTime.now());
-            }
-        }).collect(Collectors.joining(","));
+        if(keys != null) {
+            expireFile = keys.stream().filter(e -> {
+                CkFileInfo fileUploadStatus = uploadService.getFileUploadStatus(e.replace(Constant.FILE_INFO, ""));
+                Long expireTime = fileUploadStatus.getExpireTime();
+                if (expireTime == null) {
+                    return false;
+                } else {
+                    LocalDateTime createTime = LocalDateTime.parse(fileUploadStatus.getUploadTime(), DateTimeFormatter.ofPattern(CkDateUtil.DUF.CN_DATETIME_FORMAT));
+                    return createTime.plusSeconds(expireTime).isBefore(LocalDateTime.now());
+                }
+            }).map(e -> e.replaceAll(Constant.FILE_INFO, "")).collect(Collectors.joining(","));
+        }
         log.info("==========开始清理 临时 列表==========");
         doClean(expireFile);
 
     }
 
     private void doClean(String expireFile) {
-        log.info("开始清理过期文件: {1}", expireFile);
+        if(StringJudge.isNull(expireFile)) return;
+        log.info("开始清理过期文件: {}", expireFile);
         R r = uploadManageHandler.batchDelFile(expireFile);
         log.info("==============================================");
-        log.info("==========清理结束, 返回结果为: {1}==========", r);
+        log.info("==========清理结束, 返回结果为: {}==========", r);
         log.info("==============================================");
     }
 
