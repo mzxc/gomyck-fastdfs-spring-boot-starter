@@ -52,6 +52,7 @@ public class SimpleUploadService implements UploadService {
     public R delFile(CkFileInfo fileInfo) {
         rs.startDoIt();
         rs.delListNode(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(fileInfo));
+        rs.hDel(Constant.COMPLETED_MAP, fileInfo.getFileMd5());
         rs.finishDoIt();
         return R.ok();
     }
