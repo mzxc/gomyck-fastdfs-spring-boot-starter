@@ -65,7 +65,7 @@ public class FileCleanTask {
 
     Logger log = LoggerFactory.getLogger(FileCleanTask.class);
 
-    @Scheduled(cron = "0/2 * * * * *")
+    @Scheduled(cron = "* 0/1 * * * *")
     public void cleanTempFile(){
 
         List<CkFileInfo> ckFileInfos = uploadService.selectCompleteFileInfo();
