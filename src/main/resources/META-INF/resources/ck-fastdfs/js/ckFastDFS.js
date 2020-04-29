@@ -235,31 +235,15 @@ class CkFastDFS {
         };
         const finalConfig     = Object.assign({}, webUpLoaderConfig, this.uploaderConfig);
         const _this           = this;
-        if (sessionStorage.ckFastDFSConfig) {
-            const ckFastDFSConfig           = JSON.parse(sessionStorage.ckFastDFSConfig);
-            finalConfig.fileSingleSizeLimit = ckFastDFSConfig.maxFileSize; //从服务器读取的单个文件上传限制
-            finalConfig.chunkSize           = ckFastDFSConfig.chunkSize; //从服务器读取的单个文件上传限制
+        this.loadServerConfig(function () {
+            finalConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
+            finalConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
             _this.uploader                  = WebUploader.create(finalConfig);
             _this.uploader.ckId             = uploaderId;
             _this.uploader.ckInstance       = _this;
             CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId, _this.uploader);
             _this.uploaderStatus.resolve();
-        } else {
-            this.loadServerConfig(function () {
-                const ckFastDFSConfig               = {};
-                ckFastDFSConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
-                ckFastDFSConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
-                sessionStorage.ckFastDFSConfig      = JSON.stringify(ckFastDFSConfig);
-
-                finalConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
-                finalConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
-                _this.uploader                  = WebUploader.create(finalConfig);
-                _this.uploader.ckId             = uploaderId;
-                _this.uploader.ckInstance       = _this;
-                CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId, _this.uploader);
-                _this.uploaderStatus.resolve();
-            });
-        }
+        });
         return uploaderId;
     }
 
@@ -546,10 +530,25 @@ class CkFastDFS {
      * @param callBack
      */
     loadServerConfig(callBack) {
-        this.httpGetRequest(this.configURI, null, function (data) {
-            this.maxFileSize   = data.resData.maxFileSize;
-            this.chunkSize     = data.resData.chunkSize;
+        if(sessionStorage.ckFastDFSConfig){
+            const ckFastDFSConfig = JSON.parse(sessionStorage.ckFastDFSConfig);
+            this.maxFileSize = ckFastDFSConfig.maxFileSize; //从服务器读取的单个文件上传限制
+            this.chunkSize =  ckFastDFSConfig.chunkSize; //从服务器读取的单个文件上传限制
+            this.fileServerUrl = ckFastDFSConfig.fileServerUrl; //从服务器读取的单个文件上传限制
+            setTimeout(callBack, 500); //兼容 vue 项目, 如果把初始化方法放在 vue created hook 上会导致页面未完全加载完成就触发初始化事件, 导致按钮绑定不上
+            return;
+        }
+        this.httpGetRequest( this.configURI, null, function ( data ) {
+            this.maxFileSize = data.resData.maxFileSize;
+            this.chunkSize = data.resData.chunkSize;
             this.fileServerUrl = data.resData.fileServerUrl;
+
+            const ckFastDFSConfig = {};
+            ckFastDFSConfig.maxFileSize = data.resData.maxFileSize;; //从服务器读取的单个文件上传限制
+            ckFastDFSConfig.chunkSize = data.resData.chunkSize; //从服务器读取的单个文件上传限制
+            ckFastDFSConfig.fileServerUrl = data.resData.fileServerUrl; //从服务器读取的单个文件上传限制
+            sessionStorage.ckFastDFSConfig = JSON.stringify(ckFastDFSConfig);
+
             callBack();
         }, function () {
             console.error('获取配置失败!');
