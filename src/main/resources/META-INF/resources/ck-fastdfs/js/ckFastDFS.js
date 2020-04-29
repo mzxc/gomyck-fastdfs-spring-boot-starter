@@ -39,7 +39,7 @@ class CkFastDFS {
         /**
          * WebUpLoader配置 参照 webUpLoaderConfig
          */
-    this.uploaderConfig = option.uploaderConfig || {};
+        this.uploaderConfig = option.uploaderConfig || {};
         /**
          * 上传按钮
          *
