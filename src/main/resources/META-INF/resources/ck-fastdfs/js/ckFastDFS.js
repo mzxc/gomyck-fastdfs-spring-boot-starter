@@ -535,7 +535,7 @@ class CkFastDFS {
             this.maxFileSize = ckFastDFSConfig.maxFileSize; //从服务器读取的单个文件上传限制
             this.chunkSize =  ckFastDFSConfig.chunkSize; //从服务器读取的单个文件上传限制
             this.fileServerUrl = ckFastDFSConfig.fileServerUrl; //从服务器读取的单个文件上传限制
-            setTimeout(callBack, 500); //兼容 vue 项目, 如果把初始化方法放在 vue created hook 上会导致页面未完全加载完成就触发初始化事件, 导致按钮绑定不上
+            callBack();//如果是 vue 项目使用该方法, 必须把 new CkFastDFS 放在 mounted 钩子上, 否则会出现元素未渲染完, 找不到元素的错误
             return;
         }
         this.httpGetRequest( this.configURI, null, function ( data ) {
