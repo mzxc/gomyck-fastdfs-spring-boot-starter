@@ -235,15 +235,31 @@ class CkFastDFS {
         };
         const finalConfig     = Object.assign({}, webUpLoaderConfig, this.uploaderConfig);
         const _this           = this;
-        this.loadServerConfig(function () {
-            finalConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
-            finalConfig.chunkSize           = _this.chunkSize;   //从服务器读取的单个文件上传限制
+        if (sessionStorage.ckFastDFSConfig) {
+            const ckFastDFSConfig           = JSON.parse(sessionStorage.ckFastDFSConfig);
+            finalConfig.fileSingleSizeLimit = ckFastDFSConfig.maxFileSize; //从服务器读取的单个文件上传限制
+            finalConfig.chunkSize           = ckFastDFSConfig.chunkSize; //从服务器读取的单个文件上传限制
             _this.uploader                  = WebUploader.create(finalConfig);
             _this.uploader.ckId             = uploaderId;
             _this.uploader.ckInstance       = _this;
-            CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId,  _this.uploader);
+            CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId, _this.uploader);
             _this.uploaderStatus.resolve();
-        });
+        } else {
+            this.loadServerConfig(function () {
+                const ckFastDFSConfig               = {};
+                ckFastDFSConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
+                ckFastDFSConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
+                sessionStorage.ckFastDFSConfig      = JSON.stringify(ckFastDFSConfig);
+
+                finalConfig.fileSingleSizeLimit = _this.maxFileSize; //从服务器读取的单个文件上传限制
+                finalConfig.chunkSize           = _this.chunkSize; //从服务器读取的单个文件上传限制
+                _this.uploader                  = WebUploader.create(finalConfig);
+                _this.uploader.ckId             = uploaderId;
+                _this.uploader.ckInstance       = _this;
+                CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId, _this.uploader);
+                _this.uploaderStatus.resolve();
+            });
+        }
         return uploaderId;
     }
 
