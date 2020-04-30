@@ -77,7 +77,7 @@ public class ChunkUploadHandler {
     @ResponseBody
     public R config() {
         Map<String, Object> stringObjectMap = ParamUtil.initParams();
-        stringObjectMap.put("maxFileSize", maxSize.replace("MB", ""));
+        stringObjectMap.put("maxFileSize", Long.parseLong(maxSize.replace("MB", "")) * 1024 * 1024);
         stringObjectMap.put("chunkSize", fsp.getChunkSize());
         stringObjectMap.put("fileServerUrl", fsp.getFileServerURI());
         return R.ok(stringObjectMap);
