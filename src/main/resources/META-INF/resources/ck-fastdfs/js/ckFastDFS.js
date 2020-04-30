@@ -530,6 +530,7 @@ class CkFastDFS {
      * @param callBack
      */
     loadServerConfig(callBack) {
+        const _this = this;
         if(sessionStorage.ckFastDFSConfig){
             const ckFastDFSConfig = JSON.parse(sessionStorage.ckFastDFSConfig);
             this.maxFileSize = ckFastDFSConfig.maxFileSize; //从服务器读取的单个文件上传限制
@@ -539,9 +540,9 @@ class CkFastDFS {
             return;
         }
         this.httpGetRequest( this.configURI, null, function ( data ) {
-            this.maxFileSize = data.resData.maxFileSize;
-            this.chunkSize = data.resData.chunkSize;
-            this.fileServerUrl = data.resData.fileServerUrl;
+            _this.maxFileSize = data.resData.maxFileSize;
+            _this.chunkSize = data.resData.chunkSize;
+            _this.fileServerUrl = data.resData.fileServerUrl;
 
             const ckFastDFSConfig = {};
             ckFastDFSConfig.maxFileSize = data.resData.maxFileSize;; //从服务器读取的单个文件上传限制
