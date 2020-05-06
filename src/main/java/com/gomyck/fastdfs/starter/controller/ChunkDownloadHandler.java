@@ -39,10 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +57,11 @@ import java.util.zip.ZipOutputStream;
 @Controller
 @RequestMapping("download/chunkDownload")
 public class ChunkDownloadHandler {
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
+    }
 
     Logger logger = LoggerFactory.getLogger(ChunkDownloadHandler.class);
 
