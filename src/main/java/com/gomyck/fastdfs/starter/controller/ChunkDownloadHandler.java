@@ -30,10 +30,7 @@ import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
-import com.gomyck.util.CkContentType;
-import com.gomyck.util.FileUtil;
-import com.gomyck.util.ResponseWriter;
-import com.gomyck.util.StringJudge;
+import com.gomyck.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,14 +190,23 @@ public class ChunkDownloadHandler {
                 ZipEntry zipEntry = new ZipEntry(zipName);
                 if (remoteFileSize <= chunkFileSize) {
                     byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
-                    zos.putNextEntry(new ZipEntry(zipEntry));
+                    try{
+                        zos.putNextEntry(new ZipEntry(zipEntry));
+                    }catch (Exception e){
+                        zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
+                        zos.putNextEntry(new ZipEntry(zipEntry));
+                    }
                     zos.write(content);
                     zos.flush();
                     zos.closeEntry();
                     continue;
                 }
-
-                zos.putNextEntry(new ZipEntry(zipEntry));
+                try{
+                    zos.putNextEntry(new ZipEntry(zipEntry));
+                }catch (Exception e){
+                    zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
+                    zos.putNextEntry(new ZipEntry(zipEntry));
+                }
                 for (; ; cycle = cycle + 1L) {
                     if ((cycle + 1) * chunkFileSize < remoteFileSize) {
                         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);

@@ -29,9 +29,7 @@ import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
-import com.gomyck.util.CkContentType;
-import com.gomyck.util.ResponseWriter;
-import com.gomyck.util.StringJudge;
+import com.gomyck.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -41,7 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -132,7 +131,12 @@ public class SimpleFileDownloadHandler {
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
                 String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
-                zos.putNextEntry(zipEntry);
+                try{
+                    zos.putNextEntry(new ZipEntry(zipEntry));
+                }catch (Exception e){
+                    zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
+                    zos.putNextEntry(new ZipEntry(zipEntry));
+                }
                 zos.write(content);
                 zos.closeEntry();
             }
