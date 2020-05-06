@@ -83,11 +83,11 @@ public class ChunkDownloadHandler {
     public void chunkDownload(String fileMd5, String fileName) {
         DownloadByteArray callback = new DownloadByteArray();
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         if (fileInfo == null) {
             logger.error("从数据库查询文件信息出错, 文件MD5: {}", fileMd5);
             throw new FileNotFoundException("数据列表中不存在该文件");
         }
+        if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         FileInfo remoteFileInfo;
         try {
             remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
