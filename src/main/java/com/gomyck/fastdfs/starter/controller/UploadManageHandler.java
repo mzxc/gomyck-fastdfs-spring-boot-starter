@@ -129,17 +129,24 @@ public class UploadManageHandler {
 
     @PostMapping(value = "/delExpireStatus")
     @ResponseBody
-    public R delExpireStatus(@RequestBody String fileMd5) {
-        boolean completeStatus = false;
-        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if(fileInfo == null) {
-            fileInfo = us.getFileUploadStatus(fileMd5);
-        }else{
-            completeStatus = true;
+    public R delExpireStatus(@RequestBody String fileMd5s) {
+        StringBuffer noSuchMd5 = new StringBuffer();
+        Stream.of(fileMd5s.split(",")).forEach(fileMd5 -> {
+            boolean completeStatus = false;
+            CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
+            if(fileInfo == null) {
+                fileInfo = us.getFileUploadStatus(fileMd5);
+            }else{
+                completeStatus = true;
+            }
+            if(fileInfo == null) noSuchMd5.append("|").append(fileMd5).append("|");
+            us.delExpireStatus(fileInfo, completeStatus);
+        });
+        if(noSuchMd5.length() > 0){
+            return R.error(R._500, "下述文件不存在: " + noSuchMd5);
+        }else {
+            return R.ok();
         }
-        if(fileInfo == null) return R.error(R._500, "文件服务器不存在该文件");
-        us.delExpireStatus(fileInfo, completeStatus);
-        return R.ok();
     }
 
 }
