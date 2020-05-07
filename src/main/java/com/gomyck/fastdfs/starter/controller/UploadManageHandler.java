@@ -57,6 +57,10 @@ public class UploadManageHandler {
     @Autowired(required = false)
     UploadService us;
 
+    /**
+     * 查询文件列表, 不分页
+     * @return R 结果
+     */
     @RequestMapping("/list")
     @ResponseBody
     public R uploadListNoPage() {
@@ -67,6 +71,12 @@ public class UploadManageHandler {
         return R.ok(stringObjectMap);
     }
 
+    /**
+     * 删除文件
+     *
+     * @param fileMd5 MD5
+     * @return R 是否成功
+     */
     @PostMapping("/delFile")
     @ResponseBody
     public R delFile(String fileMd5) {
@@ -95,7 +105,11 @@ public class UploadManageHandler {
         return R.ok();
     }
 
-
+    /**
+     * 批量删除文件
+     * @param fileMd5s MD5
+     * @return R 是否成功
+     */
     @PostMapping(value = "/batchDelFile")
     @ResponseBody
     public R batchDelFile(@RequestBody String fileMd5s) {
@@ -127,6 +141,12 @@ public class UploadManageHandler {
         return R.ok();
     }
 
+    /**
+     * 删除文件过期标记, 使文件永久有效(配合客户端传的expireTime一起使用, 如果不传expireTime, 则不需要调用此方法)
+     *
+     * @param fileMd5s 文件 MD5
+     * @return R 是否成功
+     */
     @PostMapping(value = "/delExpireStatus")
     @ResponseBody
     public R delExpireStatus(@RequestBody String fileMd5s) {
