@@ -2,20 +2,7 @@
 
 ### 当前MASTER为1.1.2-SNAPSHOT版本
 
-如果使用 SNAPSHOT 版本 , 请在 setting 中加入 sonatype 的 SNAPSHOT 仓库镜像
-
-```xml
-<mirror>
-  <id>sonatype-Release</id>
-  <url>https://oss.sonatype.org/content/repositories/releases/</url>
-  <mirrorOf>central</mirrorOf>
-</mirror>
-<mirror>
-  <id>sonatype-Snapshot</id>
-  <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-  <mirrorOf>central</mirrorOf>
-</mirror>
-```
+如果使用 SNAPSHOT 版本 , 请勾选 develop-fastdfs
 
 
 ### 一.环境配置
