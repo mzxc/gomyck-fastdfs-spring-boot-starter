@@ -2,6 +2,19 @@
 
 ### 当前MASTER为1.1.2-SNAPSHOT版本
 
+如果使用 SNAPSHOT 版本 , 请在 setting 中加入 sonatype 的 SNAPSHOT 仓库镜像
+
+<mirror>
+  <id>sonatype-Release</id>
+  <url>https://oss.sonatype.org/content/repositories/releases/</url>
+  <mirrorOf>central</mirrorOf>
+</mirror>
+<mirror>
+  <id>sonatype-Snapshot</id>
+  <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+  <mirrorOf>central</mirrorOf>
+</mirror>
+
 ### 一.环境配置
 
 #### 1.在pom文件中加入依赖:
