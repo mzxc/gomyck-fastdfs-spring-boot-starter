@@ -4,6 +4,7 @@
 
 如果使用 SNAPSHOT 版本 , 请在 setting 中加入 sonatype 的 SNAPSHOT 仓库镜像
 
+```xml
 <mirror>
   <id>sonatype-Release</id>
   <url>https://oss.sonatype.org/content/repositories/releases/</url>
@@ -14,6 +15,8 @@
   <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
   <mirrorOf>central</mirrorOf>
 </mirror>
+```
+
 
 ### 一.环境配置
 
