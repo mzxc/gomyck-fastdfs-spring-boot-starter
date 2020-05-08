@@ -43,4 +43,20 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>develop-fastdfs</id>
+            <repositories>
+                <repository>
+                    <id>sonatype-Release</id>
+                    <url>https://oss.sonatype.org/content/repositories/releases/</url>
+                </repository>
+                <repository>
+                    <id>sonatype-Snapshot</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
 </project>
