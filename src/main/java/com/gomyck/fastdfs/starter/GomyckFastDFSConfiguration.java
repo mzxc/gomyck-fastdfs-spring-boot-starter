@@ -47,7 +47,7 @@ public class GomyckFastDFSConfiguration {
     @Bean
     @ConditionalOnMissingBean(FileLock.class)
     public FileLock initFileLockDefault(){
-        log.info("Initializing memory file lock, if you want open redis file lock, please config gomyck.config.redis: true in yml and conif the jedisPool");
+        log.info("Initializing memory file lock, if you want open redis file lock, please config gomyck.config.redis: true in yml and config the jedisPool");
         return new SimpleMapFileLock();
     }
 }
