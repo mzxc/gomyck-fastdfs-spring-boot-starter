@@ -75,9 +75,9 @@ public class config extends WebMvcConfigurationSupport {
 
 #### 1.在需要开发文件上传的页面(你的业务页面), 引入js: 
 
-> host{:port}/{contextPath/}/ck-3pty/jquery/jquery-core.min.js   
-> host{:port}/{contextPath/}/ck-fastdfs/js/webuploader.nolog.js   
-> host{:port}/{contextPath/}/ck-fastdfs/js/ckFastDFS.js   
+> {schema://}host{:port}{/contextPath}/ck-3pty/jquery/jquery-core.min.js   
+> {schema://}host{:port}{/contextPath}/ck-fastdfs/js/webuploader.nolog.js   
+> {schema://}host{:port}{/contextPath}/ck-fastdfs/js/ckFastDFS.js   
 
 #### 2.开发文档
 
