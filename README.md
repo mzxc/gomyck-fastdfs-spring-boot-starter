@@ -53,7 +53,7 @@ gomyck:
     file-server-url: 192.168.1.196 #远程文件服务连接地址
 ```
 
-#### 3.在静态资源映射表中加入以下配置
+#### 3.在静态资源映射表中加入以下配置(可选, 重写resources.staticLocations时要根据实际配置决定是否加入下述代码)
 ```java
 @Configuration
 public class config extends WebMvcConfigurationSupport {
