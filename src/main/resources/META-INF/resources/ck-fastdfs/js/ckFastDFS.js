@@ -1,5 +1,5 @@
 /**
- * 文件上传控制器
+ * 文件上传控制器  VUE项目请把初始化方法写在 mount 下
  * author:  gomyck
  * qq: 474798383
  * email: hao474798383@163.com
