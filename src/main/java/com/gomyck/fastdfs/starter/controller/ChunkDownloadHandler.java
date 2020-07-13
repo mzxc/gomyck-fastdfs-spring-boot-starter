@@ -162,7 +162,7 @@ public class ChunkDownloadHandler {
         if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
         HttpServletResponse response = ResponseWriter.getResponse();
         try {
-            response.setHeader("Content-Disposition", "attachment; filename=" + ResponseWriter.fileNameWrapper(downloadInfo.getZipFileName() + ".zip"));
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + ResponseWriter.fileNameWrapper(downloadInfo.getZipFileName() + ".zip\""));
             response.setContentType(CkContentType.ZIP.getTypeValue());
             ServletOutputStream outputStream = response.getOutputStream();
             ZipOutputStream zos = new ZipOutputStream(outputStream);
