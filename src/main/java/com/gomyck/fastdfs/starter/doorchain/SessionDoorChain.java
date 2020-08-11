@@ -7,7 +7,7 @@ package com.gomyck.fastdfs.starter.doorchain;
  * @blog https://blog.gomyck.com
  * @since 2020/8/11
  */
-public class CookieDoorChain implements CkDoorChain {
+public class SessionDoorChain implements CkDoorChain {
 
     @Override
     public boolean pass() {
