@@ -57,7 +57,7 @@ public class ChunkDownloadHandler {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
+        binder.setAutoGrowCollectionLimit(1000);
     }
 
     Logger logger = LoggerFactory.getLogger(ChunkDownloadHandler.class);
