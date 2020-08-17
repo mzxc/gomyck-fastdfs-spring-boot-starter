@@ -45,6 +45,7 @@ class CkFastDFS {
          *
          * 按钮选择器: buttonId[Selector]
          * 是否开启多文件选择: multiple[boolean]
+         * 是否开启文件夹选择: directory[boolean]
          */
         this.uploadButton = option.uploadButton;
         /**
@@ -66,7 +67,10 @@ class CkFastDFS {
             this.registerWebUploader(); //注册webUpLoader默认项
             CkFastDFS.prototype.initOnce = true;
         }
-        this.uploader   = null; //上传插件实例
+        /**
+         * 上传插件实例
+         */
+        this.uploader   = null;
         this.uploaderId = this.initWebUpLoader();//上传插件ID
         this.initUpLoaderEvent();//注册事件
     }
@@ -140,6 +144,7 @@ class CkFastDFS {
                     const fileId    = file.id;   //文件ID
                     const fileName  = file.name; //文件名称
                     const fileSize  = file.size; //文件大小
+                    //const directory = file.source.source.webkitRelativePath; //文件所处文件夹
                     const task      = new $.Deferred();
                     let currentThis = this;
                     const _this     = currentThis.owner.ckInstance;
@@ -151,6 +156,9 @@ class CkFastDFS {
                             fileMd5: fileMd5,
                             fileSize: fileSize
                         };
+                        // if ( directory ) {
+                        //     Object.assign( data, { directory } );
+                        // }
                         _this.httpPostRequest(url, data, function (data) {
                             if (!data.isOk) {
                                 _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
@@ -219,7 +227,8 @@ class CkFastDFS {
                 mimeTypes: 'text/plain,/image/jpg,image/jpeg,image/png,image/gif,image/bmp,application/msword,' +
                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,' +
                     'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,' +
-                    'application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/x-zip-compressed,application/x-rar-compressed'
+                    'application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,' +
+                    'application/x-zip-compressed,application/x-rar-compressed'
             },
             runtimeOrder: "html5,flash",
             resize: false,
@@ -591,12 +600,16 @@ class CkFastDFS {
      * 取消上传
      * @param file 文件信息
      */
-    cancleUpload(file) {
+    cancelUpload(file) {
         if (file) {
             this.uploader.cancelFile(file);
         } else {
             console.error("no file info can be cancel")
         }
+    }
+
+    addFiles(files) {
+        if(files) this.uploader.addFiles(files);
     }
 
 }
