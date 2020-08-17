@@ -136,69 +136,69 @@ class CkFastDFS {
      */
     registerWebUploader() {
         WebUploader.Uploader.register({
-                "before-send-file": "beforeSendFile",
-                "before-send": "beforeSend"
-            },
-            {
-                beforeSendFile: function (file) {
-                    const fileId    = file.id;   //文件ID
-                    const fileName  = file.name; //文件名称
-                    const fileSize  = file.size; //文件大小
-                    //const directory = file.source.source.webkitRelativePath; //文件所处文件夹
-                    const task      = new $.Deferred();
-                    let currentThis = this;
-                    const _this     = currentThis.owner.ckInstance;
-                    currentThis.owner.md5File(file).then(function (fileMd5) {
-                        const url  = _this.checkURI;
-                        const data = {
-                            fileId: fileId,
-                            fileName: fileName,
-                            fileMd5: fileMd5,
-                            fileSize: fileSize
-                        };
-                        // if ( directory ) {
-                        //     Object.assign( data, { directory } );
-                        // }
-                        _this.httpPostRequest(url, data, function (data) {
-                            if (!data.isOk) {
-                                _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
-                                task.reject();
-                                return;
-                            }
-                            if (data.resCode == 302) {
-                                _this.changeProgressBar(_this.getRefer(file), file, 1);
-                                _this.uploadListener.uploadSuccess(_this.getRefer(file), file, data);
-                                file.quickUp = true;
-                                task.reject();
-                                return;
-                            }
-                            if (!(data.resData.chunk >= 0)) {
-                                _this.uploadListener.error(_this.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
-                                task.reject();
-                                return;
-                            }
-                            _this.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
-                            task.resolve();
-                        }, function () {
-                            _this.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
+            "before-send-file": "beforeSendFile",
+            "before-send": "beforeSend"
+        },
+        {
+            beforeSendFile: function (file) {
+                const fileId    = file.id;   //文件ID
+                const fileName  = file.name; //文件名称
+                const fileSize  = file.size; //文件大小
+                //const directory = file.source.source.webkitRelativePath; //文件所处文件夹
+                const task      = new $.Deferred();
+                let currentThis = this;
+                const _this     = currentThis.owner.ckInstance;
+                currentThis.owner.md5File(file).then(function (fileMd5) {
+                    const url  = _this.checkURI;
+                    const data = {
+                        fileId: fileId,
+                        fileName: fileName,
+                        fileMd5: fileMd5,
+                        fileSize: fileSize
+                    };
+                    // if ( directory ) {
+                    //     Object.assign( data, { directory } );
+                    // }
+                    _this.httpPostRequest(url, data, function (data) {
+                        if (!data.isOk) {
+                            _this.uploadListener.error(_this.SERVER_ERROR, data.resMsg);
                             task.reject();
-                        })
-                    });
-                    return $.when(task);
-                },
-                beforeSend: function (block) {
-                    const task   = new $.Deferred();
-                    const fileId = this.owner.ckId + block.file.id;
-                    const chunk  = this.owner.ckInstance.chunkMap.get(fileId).chunk; //当前第几块
-                    if (block.chunk < chunk) {
-                        task.reject();
-                    } else {
-                        console.debug("第" + block.chunk + "块开始上传");
+                            return;
+                        }
+                        if (data.resCode == 302) {
+                            _this.changeProgressBar(_this.getRefer(file), file, 1);
+                            _this.uploadListener.uploadSuccess(_this.getRefer(file), file, data);
+                            file.quickUp = true;
+                            task.reject();
+                            return;
+                        }
+                        if (!(data.resData.chunk >= 0)) {
+                            _this.uploadListener.error(_this.SERVER_ERROR, '无法获取当前文件块, 请联系管理员');
+                            task.reject();
+                            return;
+                        }
+                        _this.chunkMap.put(currentThis.owner.ckId + fileId, {fileMd5: fileMd5, chunk: data.resData.chunk});
                         task.resolve();
-                    }
-                    return $.when(task);
+                    }, function () {
+                        _this.uploadListener.error(_this.SERVER_ERROR, '服务器错误, 请联系管理员');
+                        task.reject();
+                    })
+                });
+                return $.when(task);
+            },
+            beforeSend: function (block) {
+                const task   = new $.Deferred();
+                const fileId = this.owner.ckId + block.file.id;
+                const chunk  = this.owner.ckInstance.chunkMap.get(fileId).chunk; //当前第几块
+                if (block.chunk < chunk) {
+                    task.reject();
+                } else {
+                    console.debug("第" + block.chunk + "块开始上传");
+                    task.resolve();
                 }
-            });
+                return $.when(task);
+            }
+        });
     }
 
     /**
