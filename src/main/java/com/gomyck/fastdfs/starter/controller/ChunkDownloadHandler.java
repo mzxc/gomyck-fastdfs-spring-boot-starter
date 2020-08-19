@@ -25,11 +25,13 @@ package com.gomyck.fastdfs.starter.controller;
 import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.gomyck.fastdfs.starter.common.DownloadFileNumException;
 import com.gomyck.fastdfs.starter.common.FileNotFoundException;
 import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
+import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -68,6 +71,9 @@ public class ChunkDownloadHandler {
 
     @Autowired
     UploadService us;
+
+    @Autowired
+    FileServerProfile profile;
 
     @Value("${gomyck.fastdfs.download-chunk-size: 1000000}")
     private long chunkFileSize;
@@ -134,6 +140,7 @@ public class ChunkDownloadHandler {
     @GetMapping("batchDownloadFile")
     @ResponseBody
     public void chunkDownload4Batch(String[] fileMd5s) {
+        if (fileMd5s.length > profile.getMaxDownloadFileNum()) throw new DownloadFileNumException("下载文件数量过多");
         BatchDownLoadParameter bdlp = new BatchDownLoadParameter();
         ArrayList<BatchDownLoadParameter.FileBatchDownload> list = new ArrayList<>();
         Stream.of(fileMd5s).forEach(e -> {
@@ -160,6 +167,7 @@ public class ChunkDownloadHandler {
     @ResponseBody
     public void batchDownloadFileHasGroup(BatchDownLoadParameter downloadInfo) {
         if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
+        if (downloadInfo.getFiles().size() > profile.getMaxDownloadFileNum()) throw new DownloadFileNumException("下载文件数量过多");
         HttpServletResponse response = ResponseWriter.getResponse();
         try {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + ResponseWriter.fileNameWrapper(downloadInfo.getZipFileName() + ".zip\""));
@@ -190,23 +198,13 @@ public class ChunkDownloadHandler {
                 ZipEntry zipEntry = new ZipEntry(zipName);
                 if (remoteFileSize <= chunkFileSize) {
                     byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
-                    try{
-                        zos.putNextEntry(new ZipEntry(zipEntry));
-                    }catch (Exception e){
-                        zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
-                        zos.putNextEntry(new ZipEntry(zipEntry));
-                    }
+                    resolveDuplicate(zos, zipName, zipEntry);
                     zos.write(content);
                     zos.flush();
                     zos.closeEntry();
                     continue;
                 }
-                try{
-                    zos.putNextEntry(new ZipEntry(zipEntry));
-                }catch (Exception e){
-                    zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
-                    zos.putNextEntry(new ZipEntry(zipEntry));
-                }
+                resolveDuplicate(zos, zipName, zipEntry);
                 for (; ; cycle = cycle + 1L) {
                     if ((cycle + 1) * chunkFileSize < remoteFileSize) {
                         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
@@ -231,6 +229,16 @@ public class ChunkDownloadHandler {
             throw new RuntimeException(e);
         }
 
+    }
+
+    // 处理重名
+    private void resolveDuplicate(ZipOutputStream zos, String zipName, ZipEntry zipEntry) throws IOException {
+        try {
+            zos.putNextEntry(new ZipEntry(zipEntry));
+        } catch (Exception e) {
+            zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
+            zos.putNextEntry(new ZipEntry(zipEntry));
+        }
     }
 
 }

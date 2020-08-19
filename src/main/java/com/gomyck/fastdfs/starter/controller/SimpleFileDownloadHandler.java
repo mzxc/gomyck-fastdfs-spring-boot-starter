@@ -24,11 +24,13 @@ package com.gomyck.fastdfs.starter.controller;
 
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.gomyck.fastdfs.starter.common.DownloadFileNumException;
 import com.gomyck.fastdfs.starter.common.FileNotFoundException;
 import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
+import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -64,6 +67,9 @@ public class SimpleFileDownloadHandler {
 
     @Autowired
     UploadService us;
+
+    @Autowired
+    FileServerProfile profile;
 
     /**
      * 文件下载
@@ -95,6 +101,7 @@ public class SimpleFileDownloadHandler {
     @GetMapping("batchDownloadFile")
     @ResponseBody
     public void simpleBatchDownload(String[] fileMd5s) {
+        if (fileMd5s.length > profile.getMaxDownloadFileNum()) throw new DownloadFileNumException("下载文件数量过多");
         BatchDownLoadParameter bdlp = new BatchDownLoadParameter();
         List<BatchDownLoadParameter.FileBatchDownload> list = new ArrayList<>();
         Stream.of(fileMd5s).forEach(e -> {
@@ -121,6 +128,7 @@ public class SimpleFileDownloadHandler {
     @ResponseBody
     public void simpleBatchDownloadHasGroup(BatchDownLoadParameter downloadInfo) {
         if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
+        if (downloadInfo.getFiles().size() > profile.getMaxDownloadFileNum()) throw new DownloadFileNumException("下载文件数量过多");
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ZipOutputStream zos = new ZipOutputStream(outputStream);
@@ -131,12 +139,7 @@ public class SimpleFileDownloadHandler {
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
                 String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
-                try{
-                    zos.putNextEntry(new ZipEntry(zipEntry));
-                }catch (Exception e){
-                    zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
-                    zos.putNextEntry(new ZipEntry(zipEntry));
-                }
+                resolveDuplicate(zos, zipName, zipEntry);
                 zos.write(content);
                 zos.closeEntry();
             }
@@ -147,6 +150,16 @@ public class SimpleFileDownloadHandler {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    // 处理重名
+    private void resolveDuplicate(ZipOutputStream zos, String zipName, ZipEntry zipEntry) throws IOException {
+        try{
+            zos.putNextEntry(new ZipEntry(zipEntry));
+        }catch (Exception e){
+            zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
+            zos.putNextEntry(new ZipEntry(zipEntry));
         }
     }
 
