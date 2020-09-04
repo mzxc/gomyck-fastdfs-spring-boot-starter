@@ -39,9 +39,9 @@ public class SimpleUploadService implements UploadService {
     }
 
     @Override
-    public List<CkFileInfo> selectCompleteFileInfo() {
+    public List<CkFileInfo> selectCompleteFileInfo(int start, int end) {
         rs.startDoIt();
-        List<String> fileList = rs.lrange(Constant.COMPLETED_LIST, 0, -1);
+        List<String> fileList = rs.lrange(Constant.COMPLETED_LIST, start, end);
         rs.finishDoIt();
         List<CkFileInfo> result = new ArrayList<>();
         if(fileList == null) return null;
@@ -53,7 +53,7 @@ public class SimpleUploadService implements UploadService {
 
     @Override
     public R delFile(CkFileInfo fileInfo) {
-        rs.startDoIt(2);
+        rs.startDoIt();
         rs.oneTime(e -> {
             e.lrem(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(fileInfo));
             e.hdel(Constant.COMPLETED_MAP, fileInfo.getFileMd5());
@@ -65,7 +65,7 @@ public class SimpleUploadService implements UploadService {
 
     @Override
     public R delExpireStatus(CkFileInfo messageDigest, boolean completeStatus) {
-        rs.startDoIt(2);
+        rs.startDoIt();
         rs.oneTime(e -> {
             if(completeStatus){
                 e.lrem(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(messageDigest));
