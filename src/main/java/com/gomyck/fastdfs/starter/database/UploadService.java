@@ -47,6 +47,7 @@ public interface UploadService {
      * 设置文件过期时间为从不
      *
      * @param fileInfo 文件信息
+     * @param completeStatus 文件完成状态
      *
      * @return R 消息实体
      */

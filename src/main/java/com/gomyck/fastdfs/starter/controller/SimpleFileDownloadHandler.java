@@ -78,12 +78,11 @@ public class SimpleFileDownloadHandler {
     FileServerProfile profile;
 
     /**
-     * 文件下载
-     *
      * 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
      *
-     * @param fileMd5 文件摘要信息
-     *
+     * @param fileMd5 文件摘要
+     * @param fileName 文件名
+     * @param thumbFlag 是否下载的是缩略图
      */
     @GetMapping("downloadFile")
     @ResponseBody

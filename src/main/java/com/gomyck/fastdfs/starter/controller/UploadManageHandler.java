@@ -58,8 +58,8 @@ public class UploadManageHandler {
     /**
      * 查询文件列表, 分页信息可以不传
      *
-     * @param start list 起始位置
-     * @param end list 结束位置
+     * @param pageIndex list 起始位置
+     * @param limit list 结束位置
      *
      * @return R 结果
      */
