@@ -70,7 +70,7 @@ public class FileCleanTask {
     @RedisManager
     public void cleanTempFile(){
         String expireFile = null;
-        List<CkFileInfo> ckFileInfos = uploadService.selectCompleteFileInfo();
+        List<CkFileInfo> ckFileInfos = uploadService.selectCompleteFileInfo(0, -1);
         if(ckFileInfos != null && ckFileInfos.size() > 0){
             expireFile = ckFileInfos.stream().filter(e -> {
                 Long expireTime = e.getExpireTime();
