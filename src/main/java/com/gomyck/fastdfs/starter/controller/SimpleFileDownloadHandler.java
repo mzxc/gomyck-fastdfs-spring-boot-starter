@@ -25,13 +25,18 @@ package com.gomyck.fastdfs.starter.controller;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.gomyck.fastdfs.starter.common.DownloadFileNumException;
-import com.gomyck.fastdfs.starter.common.FileNotFoundException;
+import com.gomyck.fastdfs.starter.common.FDFSUtil;
 import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
-import com.gomyck.util.*;
+import com.gomyck.util.CkContentType;
+import com.gomyck.util.FileUtil;
+import com.gomyck.util.ResponseWriter;
+import com.gomyck.util.StringJudge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -41,7 +46,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -56,6 +60,8 @@ import java.util.zip.ZipOutputStream;
 @Controller
 @RequestMapping("download/simpleDownload")
 public class SimpleFileDownloadHandler {
+
+    Logger logger = LoggerFactory.getLogger(SimpleFileDownloadHandler.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -81,14 +87,16 @@ public class SimpleFileDownloadHandler {
      */
     @GetMapping("downloadFile")
     @ResponseBody
-    public void simpleDownload(String fileMd5) {
-        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if (fileInfo == null) throw new FileNotFoundException("数据列表中不存在该文件");
+    public void simpleDownload(String fileMd5, String fileName, String thumbFlag) {
+        CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, ffsc, fileMd5);
+        // 如果自定义文件名 则替换
+        if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
+        // 如果是下载略缩图 则替换下载路径
+        if(StringJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals("1")) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
         DownloadByteArray callback = new DownloadByteArray();
         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
         ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
     }
-
 
     /**
      * 文件批量下载
@@ -139,7 +147,7 @@ public class SimpleFileDownloadHandler {
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
                 String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
-                resolveDuplicate(zos, zipName, zipEntry);
+                FDFSUtil.resolveDuplicate(zos, zipName, zipEntry);
                 zos.write(content);
                 zos.closeEntry();
             }
@@ -152,16 +160,5 @@ public class SimpleFileDownloadHandler {
             throw new RuntimeException(e);
         }
     }
-
-    // 处理重名
-    private void resolveDuplicate(ZipOutputStream zos, String zipName, ZipEntry zipEntry) throws IOException {
-        try{
-            zos.putNextEntry(new ZipEntry(zipEntry));
-        }catch (Exception e){
-            zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
-            zos.putNextEntry(new ZipEntry(zipEntry));
-        }
-    }
-
 
 }

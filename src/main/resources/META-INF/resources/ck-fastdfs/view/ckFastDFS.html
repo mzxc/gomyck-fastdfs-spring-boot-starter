@@ -58,7 +58,11 @@
         uploaderConfig: {
             data: {
                 demo: "123",
-                expireTime: 300 //文件过期时间, 要配合对应的接口 delExpireStatus 使用
+                //expireTime: 300, //文件过期时间, 要配合对应的接口 delExpireStatus 使用
+                thumbImgWidth: 400,
+                thumbImgHeight: 200,
+
+                thumbImgPercent: 0.3
             },
             headers: {
                 Authorization: "GOMYCK"
@@ -149,11 +153,12 @@
                     <td class="text-center text-muted" style="vertical-align: middle;"><span>${_temp.fileMd5}</span></td >
                     <td class="text-center text-muted" style="vertical-align: middle;"><span>${size}KB</span></td >
                     <td class="text-center text-muted" style="vertical-align: middle;"><span>${_temp.uploadTime}</span></td >
-                    <td class="text-center text-muted" style="vertical-align: middle;">
+                    <td class="text-center text-muted" style="vertical-align: middle;width: 400px">
                         <a target="_blank" href="${data.resData.fileServerUrl}/${_temp.group}/${_temp.uploadPath}" >查看</a >
-                        <a target="_blank" download href="${baseUri}/download/chunkDownload/downloadFile?fileMd5=${_temp.fileMd5}" >下载</a >
                         <a class="del" fileMd5="${_temp.fileMd5}" >删除</a >
-                        <a class="batchDownload" fileMd5="${_temp.fileMd5}" >批量下载</a >
+                        <a target="_blank" download href="${baseUri}/download/chunkDownload/downloadFile?fileMd5=${_temp.fileMd5}" >下载</a > <br />
+                        <a class="batchDownload" fileMd5="${_temp.fileMd5}" >批量下载</a >  <br />
+                        <a target="_blank" download href="${baseUri}/download/chunkDownload/downloadFile?fileMd5=${_temp.fileMd5}&thumbFlag=1" >下载略缩图(仅图片)</a >
                     </td >
                 </tr >`;
                 $("#resTable").append(tds);

@@ -2,19 +2,21 @@
 
 package com.gomyck.fastdfs.starter.database.entity;
 
+import lombok.Data;
+
 /**
  * @author gomyck QQ:474798383
  * @version [版本号/1.0]
- *
  * @since [2019-07-24]
  */
+@Data
 public class CkFileInfo {
 
     private String id;
 
     private String name; //文件名称
 
-    private String group;
+    private String group; //组
 
     private String uploadPath; //文件服务器路径
 
@@ -34,99 +36,14 @@ public class CkFileInfo {
 
     private Long expireTime; //过期时间, 以秒为单位
 
-    public Long getExpireTime() {
-        return expireTime;
-    }
+    private boolean thumbFlag = true; //是否生成略缩图 默认生成
 
-    public void setExpireTime(Long expireTime) {
-        this.expireTime = expireTime;
-    }
+    private String thumbImgPath; //略缩图文件位置
 
-    public String getId() {
-        return id;
-    }
+    private Integer thumbImgWidth; //缩放长度
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    private Integer thumbImgHeight; //缩放高度
 
-    public String getName() {
-        return name;
-    }
+    private Double thumbImgPercent; //缩放比例 如果存在宽高比, 那么默认按照宽高比缩放
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUploadPath() {
-        return uploadPath;
-    }
-
-    public void setUploadPath(String uploadPath) {
-        this.uploadPath = uploadPath;
-    }
-
-    public String getFileMd5() {
-        return fileMd5;
-    }
-
-    public void setFileMd5(String fileMd5) {
-        this.fileMd5 = fileMd5;
-    }
-
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
-    public String getUploadTime() {
-        return uploadTime;
-    }
-
-    public void setUploadTime(String uploadTime) {
-        this.uploadTime = uploadTime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getChunk() {
-        return chunk;
-    }
-
-    public void setChunk(String chunk) {
-        this.chunk = chunk;
-    }
-
-    public String getChunks() {
-        return chunks;
-    }
-
-    public void setChunks(String chunks) {
-        this.chunks = chunks;
-    }
-
-    public Long getChunkSize() {
-        return chunkSize;
-    }
-
-    public void setChunkSize(Long chunkSize) {
-        this.chunkSize = chunkSize;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
 }

@@ -25,7 +25,10 @@
 package com.gomyck.fastdfs.starter.controller;
 
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
+import com.github.tobato.fastdfs.domain.upload.FastImageFile;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
@@ -46,6 +49,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +61,9 @@ public class ChunkUploadHandler {
 
     @Autowired
     private AppendFileStorageClient appendFileStorageClient;
+
+    @Autowired
+    private FastFileStorageClient simpleFileDownloadHandler;
 
     @Value("${spring.servlet.multipart.max-file-size: 1MB}")
     private String maxSize;
@@ -93,10 +100,11 @@ public class ChunkUploadHandler {
         String fileLock = Constant.FILE_LOCK + fileInfo.getFileMd5();
         if (StringJudge.isNull(fileInfo.getChunk())) fileInfo.setChunk("0");
         if (StringJudge.isNull(fileInfo.getChunks())) fileInfo.setChunks("0");
-        CkFileInfo fileUploadStatus = us.getFileUploadStatus(fileInfo.getFileMd5());
+        //todo 查询历史文件, 这个一般来说第一次查是没有的, 但是第二次续传一定有, 所以整体流程以这个对象操作为主
+        CkFileInfo historyFileInfo = us.getFileUploadStatus(fileInfo.getFileMd5());
         //设置文件分组
-        if(fileUploadStatus != null){ //如果历史文件不为空, 把当前的分组设置为原来的分组, 防止前端传过来的分组与历史不符
-            fileInfo.setGroup(fileUploadStatus.getGroup());
+        if(historyFileInfo != null){ //如果历史文件不为空, 把当前的分组设置为原来的分组, 防止前端传过来的分组与历史不符
+            fileInfo.setGroup(historyFileInfo.getGroup());
         }else{
             if(StringJudge.isNull(fileInfo.getGroup())){ //如果前端传过来的分组是空, 则设置配置的分组
                 fileInfo.setGroup(fsp.getGroupId());
@@ -109,16 +117,16 @@ public class ChunkUploadHandler {
                 ifHasLock = true;
             }
             List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles(FILE_PARAM_NAME);
-            Integer hasUploadChunk = 0; //查询当前文件存储到第几块了
-            if(fileUploadStatus != null){
-                String chunk = fileUploadStatus.getChunk();
+            int hasUploadChunk = 0; //查询当前文件存储到第几块了
+            if(historyFileInfo != null){
+                String chunk = historyFileInfo.getChunk();
                 if(StringJudge.notNull(chunk)){
                     hasUploadChunk = Integer.parseInt(chunk);
                 }
             }else{
-                fileUploadStatus = new CkFileInfo();
+                historyFileInfo = new CkFileInfo();
             }
-            Integer currentChunk = Integer.parseInt(fileInfo.getChunk());
+            int currentChunk = Integer.parseInt(fileInfo.getChunk());
             if (currentChunk < hasUploadChunk) {
                 return R.error(R._500, "当前文件块已上传, 请重试");
             } else if (currentChunk > (hasUploadChunk + 1)) {
@@ -144,22 +152,23 @@ public class ChunkUploadHandler {
                         fileInfo.setGroup(fileInfo.getGroup());
                         fileInfo.setUploadPath(path.getPath());
                     } else {
-                        fileUploadStatus = us.getFileUploadStatus(fileInfo.getFileMd5());
+                        historyFileInfo = us.getFileUploadStatus(fileInfo.getFileMd5());
                         try {
                             //appendFileStorageClient.modifyFile(fileUploadStatus.getGroup(), fileUploadStatus.getUploadPath(), file.getInputStream(), file.getSize(), (hasUploadChunk + 1) * fileInfo.getChunkSize());
                             //todo 修复丢失字节的 BUG
-                            appendFileStorageClient.appendFile(fileUploadStatus.getGroup(), fileUploadStatus.getUploadPath(), file.getInputStream(), file.getSize());
+                            appendFileStorageClient.appendFile(historyFileInfo.getGroup(), historyFileInfo.getUploadPath(), file.getInputStream(), file.getSize());
                         } catch (Exception e) {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
                         }
                     }
-                    BeanUtil.copyProperties(fileInfo, fileUploadStatus); //把本次传入的参数copy到历史数据中, 然后更新
-                    us.saveFileUploadStatus(fileUploadStatus);
+                    BeanUtil.copyProperties(fileInfo, historyFileInfo); //把本次传入的参数copy到历史数据中, 然后更新
+                    us.saveFileUploadStatus(historyFileInfo);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
-                        fileUploadStatus.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT));
-                        us.saveUploadInfo(fileUploadStatus);
-                        us.delFileUploadStatus(fileUploadStatus.getFileMd5());
+                        historyFileInfo.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT));
+                        generateThumbImg(historyFileInfo);
+                        us.saveUploadInfo(historyFileInfo);
+                        us.delFileUploadStatus(historyFileInfo.getFileMd5());
                     }
                 } catch (Exception e) {
                     return R.error(R._500, "上传错误: " + e.getMessage());
@@ -169,7 +178,42 @@ public class ChunkUploadHandler {
         } finally {
             if (ifHasLock) fl.delLock(fileLock);
         }
-        return R.ok(fileUploadStatus);
+        return R.ok(historyFileInfo);
+    }
+
+    /**
+     * 生成缩略图
+     *
+     * @param historyFileInfo 上传的文件
+     */
+    private void generateThumbImg(CkFileInfo historyFileInfo) {
+        if(historyFileInfo.isThumbFlag()){
+            try{
+                DownloadByteArray callback = new DownloadByteArray();
+                //todo 这里要下载一下, 因为主流程为断点续传, 图片与略缩图上传不支持断点续传, 所以要全部传完之后, 统一上传
+                byte[] bytes = simpleFileDownloadHandler.downloadFile(historyFileInfo.getGroup(), historyFileInfo.getUploadPath(), callback);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+                FastImageFile.Builder builder = new FastImageFile.Builder();
+                builder.toGroup(historyFileInfo.getGroup());
+                builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), FileUtil.getFileSuffixNameByFileName(historyFileInfo.getName()));
+                if(StringJudge.notNull(historyFileInfo.getThumbImgPercent()))  {
+                    builder.withThumbImage(historyFileInfo.getThumbImgPercent());
+                } else if(StringJudge.notNull(historyFileInfo.getThumbImgWidth(), historyFileInfo.getThumbImgHeight())) {
+                    builder.withThumbImage(historyFileInfo.getThumbImgWidth(), historyFileInfo.getThumbImgHeight());
+                } else {
+                    builder.withThumbImage();
+                }
+                FastImageFile imgFile = builder.build();
+                builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), FileUtil.getFileSuffixNameByFileName(historyFileInfo.getName()));
+                StorePath storePath = simpleFileDownloadHandler.uploadImage(imgFile);
+                simpleFileDownloadHandler.deleteFile(storePath.getGroup(), storePath.getPath()); //todo 删除略缩图的原图
+                historyFileInfo.setThumbImgPath(imgFile.getThumbImagePath(storePath.getPath()));
+                log.info("thumb img path is: {}", historyFileInfo.getThumbImgPath());
+            }catch (Exception imgError){
+                //todo 一般来说, 图片格式不受支持则会报错
+                log.error(imgError.toString());
+            }
+        }
     }
 
 
@@ -182,13 +226,9 @@ public class ChunkUploadHandler {
         if(fl.ifLock(fileLock)){
             return R.error(R._500, "当前文件正在被上传, 请稍后再试");
         }
-        List<CkFileInfo> fileInfos = us.selectCompleteFileInfo();
-        if (fileInfos != null) {
-            for (CkFileInfo e : fileInfos) {
-                if (fileMd5.equals(e.getFileMd5())) {
-                    return R.ok(R._302, e);
-                }
-            }
+        CkFileInfo fileByMessageDigest = us.getFileByMessageDigest(fileMd5);
+        if (fileByMessageDigest != null) {
+            return R.ok(R._302, fileByMessageDigest);
         }
         CkFileInfo fileUploadStatus = us.getFileUploadStatus(fileMd5);
         if (fileUploadStatus != null && StringJudge.notNull(fileUploadStatus.getChunk())) {

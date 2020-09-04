@@ -26,6 +26,7 @@ import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.gomyck.fastdfs.starter.common.DownloadFileNumException;
+import com.gomyck.fastdfs.starter.common.FDFSUtil;
 import com.gomyck.fastdfs.starter.common.FileNotFoundException;
 import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
@@ -82,30 +83,24 @@ public class ChunkDownloadHandler {
      * 文件下载 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
      *
      * @param fileMd5 文件摘要信息
+     * @param fileName 下载文件名 非必传
+     * @param thumbFlag 是否是下载略缩图 非必传  1为下载略缩图, 如果略缩图没有, 就返回原图 (仅图片有此选项, 业务侧使用时自行判断)
      *
      */
     @GetMapping("downloadFile")
     @ResponseBody
-    public void chunkDownload(String fileMd5, String fileName) {
-        DownloadByteArray callback = new DownloadByteArray();
-        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if (fileInfo == null) {
-            logger.error("从数据库查询文件信息出错, 文件MD5: {}", fileMd5);
-            throw new FileNotFoundException("数据列表中不存在该文件");
-        }
+    public void chunkDownload(String fileMd5, String fileName, String thumbFlag) {
+        CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, ffsc, fileMd5);
+        // 如果自定义文件名 则替换
         if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
-        FileInfo remoteFileInfo;
-        try {
-            remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
-            if (remoteFileInfo == null) throw new FileNotFoundException("文件服务器中不存在该文件");
-        } catch (Exception e) {
-            logger.error("从文件服务器查询文件信息出错, 分组: {}, 路径: {}", fileInfo.getGroup(), fileInfo.getUploadPath());
-            throw new FileNotFoundException("文件服务器中不存在该文件");
-        }
+        // 如果是下载略缩图 则替换下载路径
+        if(StringJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals("1")) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
+        FileInfo remoteFileInfo = FDFSUtil.getFileInfoRemote(ffsc, fileInfo);
         long cycle = 0L;  //下载次数
         long offset = 0L; //当前偏移量
         long downloadFileSize = chunkFileSize; //当前实际要下载的块大小
         long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
+        DownloadByteArray callback = new DownloadByteArray();
         //todo 如果文件大小 小于分块大小, 一次性下载
         if (remoteFileSize <= chunkFileSize) {
             byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
@@ -198,13 +193,13 @@ public class ChunkDownloadHandler {
                 ZipEntry zipEntry = new ZipEntry(zipName);
                 if (remoteFileSize <= chunkFileSize) {
                     byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
-                    resolveDuplicate(zos, zipName, zipEntry);
+                    FDFSUtil.resolveDuplicate(zos, zipName, zipEntry);
                     zos.write(content);
                     zos.flush();
                     zos.closeEntry();
                     continue;
                 }
-                resolveDuplicate(zos, zipName, zipEntry);
+                FDFSUtil.resolveDuplicate(zos, zipName, zipEntry);
                 for (; ; cycle = cycle + 1L) {
                     if ((cycle + 1) * chunkFileSize < remoteFileSize) {
                         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
@@ -229,16 +224,6 @@ public class ChunkDownloadHandler {
             throw new RuntimeException(e);
         }
 
-    }
-
-    // 处理重名
-    private void resolveDuplicate(ZipOutputStream zos, String zipName, ZipEntry zipEntry) throws IOException {
-        try {
-            zos.putNextEntry(new ZipEntry(zipEntry));
-        } catch (Exception e) {
-            zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
-            zos.putNextEntry(new ZipEntry(zipEntry));
-        }
     }
 
 }

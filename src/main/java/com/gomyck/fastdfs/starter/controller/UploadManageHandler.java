@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright (c) 2019 gomyck
  *
@@ -21,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.gomyck.fastdfs.starter.controller;
 
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
@@ -29,6 +26,7 @@ import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
+import com.gomyck.util.PageUtil;
 import com.gomyck.util.ParamUtil;
 import com.gomyck.util.R;
 import com.gomyck.util.StringJudge;
@@ -58,16 +56,22 @@ public class UploadManageHandler {
     UploadService us;
 
     /**
-     * 查询文件列表, 不分页
+     * 查询文件列表, 分页信息可以不传
+     *
+     * @param start list 起始位置
+     * @param end list 结束位置
+     *
      * @return R 结果
      */
     @RequestMapping("/list")
     @ResponseBody
-    public R uploadListNoPage() {
+    public R uploadListByPage(Long pageIndex, Long limit) {
         ServiceCheck.uploadServiceCheck(us);
+        if(pageIndex == null) pageIndex = 1L;
+        if(limit == null) limit = -1L;
         Map<String, Object> stringObjectMap = ParamUtil.initParams();
         stringObjectMap.put("fileServerUrl", fsp.getFileServerURI());
-        stringObjectMap.put("fileList", us.selectCompleteFileInfo());
+        stringObjectMap.put("fileList", us.selectCompleteFileInfo(Integer.parseInt(PageUtil.getStartOfPage(pageIndex, limit) + ""), Integer.parseInt(PageUtil.getEndOfPage(pageIndex, limit) + "")));
         return R.ok(stringObjectMap);
     }
 
@@ -81,18 +85,8 @@ public class UploadManageHandler {
     @ResponseBody
     public R delFile(String fileMd5) {
         ServiceCheck.uploadServiceCheck(us);
-        List<CkFileInfo> fileInfos = us.selectCompleteFileInfo();
-        if (fileInfos == null) {
-            return R.error(R._500, "文件服务器不存在该文件");
-        }
-        CkFileInfo fileInfo = new CkFileInfo();
-        for (CkFileInfo e : fileInfos) {
-            if (fileMd5.equals(e.getFileMd5())) {
-                fileInfo = e;
-                break;
-            }
-        }
-        if(StringJudge.isNull(fileInfo.getUploadPath())){
+        CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
+        if (fileInfo == null || StringJudge.hasNull(fileInfo.getUploadPath())) {
             return R.error(R._500, "文件服务器不存在该文件");
         }
         try{
@@ -114,18 +108,8 @@ public class UploadManageHandler {
     @ResponseBody
     public R batchDelFile(@RequestBody String fileMd5s) {
         ServiceCheck.uploadServiceCheck(us);
-        List<CkFileInfo> fileInfos = us.selectCompleteFileInfo();
-        if (fileInfos == null) {
-            return R.error(R._500, "文件服务器不存在该文件");
-        }
         Stream.of(fileMd5s.split(",")).forEach(fileMd5 -> {
-            CkFileInfo fileInfo= null;
-            for (CkFileInfo e : fileInfos) {
-                if (fileMd5.equals(e.getFileMd5())) {
-                    fileInfo = e;
-                    break;
-                }
-            }
+            CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
             if(fileInfo == null) fileInfo = us.getFileUploadStatus(fileMd5);
             if(fileInfo == null) return;
             if(StringJudge.isNull(fileInfo.getUploadPath())) return;
