@@ -90,7 +90,7 @@ public class ChunkDownloadHandler {
     @GetMapping("downloadFile")
     @ResponseBody
     public void chunkDownload(String fileMd5, String fileName, String thumbFlag) {
-        CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, ffsc, fileMd5);
+        CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, fileMd5);
         // 如果自定义文件名 则替换
         if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         // 如果是下载略缩图 则替换下载路径

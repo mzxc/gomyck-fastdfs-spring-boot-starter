@@ -21,7 +21,7 @@ public class FDFSUtil {
 
     private static Logger logger = LoggerFactory.getLogger(FDFSUtil.class);
 
-    public static CkFileInfo getFileInfo(UploadService us, FastFileStorageClient ffsc, String fileMd5) {
+    public static CkFileInfo getFileInfo(UploadService us, String fileMd5) {
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
         if (fileInfo == null) {
             logger.error("从数据库查询文件信息出错, 文件MD5: {}", fileMd5);
