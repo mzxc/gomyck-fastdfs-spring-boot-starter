@@ -79,6 +79,8 @@ public class ChunkDownloadHandler {
     @Value("${gomyck.fastdfs.download-chunk-size: 1000000}")
     private long chunkFileSize;
 
+    private static final String THUMB_FLAG_TRUE = "1";
+
     /**
      * 文件下载 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
      *
@@ -94,7 +96,7 @@ public class ChunkDownloadHandler {
         // 如果自定义文件名 则替换
         if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         // 如果是下载略缩图 则替换下载路径
-        if(StringJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals("1")) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
+        if(StringJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals(THUMB_FLAG_TRUE)) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
         FileInfo remoteFileInfo = FDFSUtil.getFileInfoRemote(ffsc, fileInfo);
         long cycle = 0L;  //下载次数
         long offset = 0L; //当前偏移量
