@@ -187,7 +187,7 @@ public class ChunkUploadHandler {
      * @param historyFileInfo 上传的文件
      */
     private void generateThumbImg(CkFileInfo historyFileInfo) {
-        if(historyFileInfo.isThumbFlag()){
+        if(historyFileInfo.isThumbFlag() && historyFileInfo.getType().contains("image")){
             try{
                 DownloadByteArray callback = new DownloadByteArray();
                 //todo 这里要下载一下, 因为主流程为断点续传, 图片与略缩图上传不支持断点续传, 所以要全部传完之后, 统一上传
