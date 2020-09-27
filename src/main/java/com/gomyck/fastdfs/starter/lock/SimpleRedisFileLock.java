@@ -19,25 +19,36 @@ public class SimpleRedisFileLock implements FileLock {
 
     @Override
     public boolean addLock(String fileKey) {
-        rc.startDoIt();
-        long lock = rc.incr(fileKey);
-        rc.finishDoIt();
+        long lock;
+        try {
+            rc.startDoIt();
+            lock = rc.incr(fileKey);
+        } finally {
+            rc.finishDoIt();
+        }
         return lock <= 1;
     }
 
     @Override
     public boolean delLock(String fileKey) {
-        rc.startDoIt();
-        rc.delKey(fileKey);
-        rc.finishDoIt();
+        try {
+            rc.startDoIt();
+            rc.delKey(fileKey);
+        } finally {
+            rc.finishDoIt();
+        }
         return true;
     }
 
     @Override
     public boolean ifLock(String fileKey) {
-        rc.startDoIt();
-        String lock = rc.get(fileKey);
-        rc.finishDoIt();
+        String lock;
+        try {
+            rc.startDoIt();
+            lock = rc.get(fileKey);
+        } finally {
+            rc.finishDoIt();
+        }
         return StringJudge.notNull(lock) && Long.parseLong(lock) > 0;
     }
 }

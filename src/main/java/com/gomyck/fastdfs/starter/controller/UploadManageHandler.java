@@ -143,7 +143,10 @@ public class UploadManageHandler {
             }else{
                 completeStatus = true;
             }
-            if(fileInfo == null) noSuchMd5.append("|").append(fileMd5).append("|");
+            if(fileInfo == null) {
+                noSuchMd5.append("|").append(fileMd5).append("|");
+                return;
+            }
             us.delExpireStatus(fileInfo, completeStatus);
         });
         if(noSuchMd5.length() > 0){
