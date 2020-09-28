@@ -30,7 +30,7 @@ public class FDFSUtil {
         return fileInfo;
     }
 
-    public static FileInfo getFileInfoRemote(FastFileStorageClient ffsc, CkFileInfo fileInfo){
+    public static FileInfo getFileInfoRemote(FastFileStorageClient ffsc, CkFileInfo fileInfo) {
         FileInfo remoteFileInfo;
         try {
             remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
@@ -47,7 +47,7 @@ public class FDFSUtil {
         try {
             zos.putNextEntry(new ZipEntry(zipEntry));
         } catch (Exception e) {
-            zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + IdUtil.getUUID().substring(0, 4) + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
+            zipEntry = new ZipEntry(FileUtil.getFileNameAndSuffix(zipName)[0] + "(" + IdUtil.getUUID() + ")" + "." + FileUtil.getFileNameAndSuffix(zipName)[1]);
             zos.putNextEntry(new ZipEntry(zipEntry));
         }
     }
