@@ -163,7 +163,7 @@ public class ChunkDownloadHandler {
     @PostMapping("batchDownloadFileHasGroup")
     @ResponseBody
     public void batchDownloadFileHasGroup(BatchDownLoadParameter downloadInfo) {
-        if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数");
+        if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数, 下载文件数量必须大于 1");
         if (downloadInfo.getFiles().size() > profile.getMaxDownloadFileNum()) throw new DownloadFileNumException("下载文件数量过多");
         HttpServletResponse response = ResponseWriter.getResponse();
         try {

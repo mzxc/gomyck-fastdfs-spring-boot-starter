@@ -1,0 +1,95 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>500 - 对不起，服务器内部错误！</title>
+    <link rel="stylesheet" type="text/css" href="../css/errorPage.css">
+</head>
+
+<body>
+<div id="wrapper">
+    <a class="logo" href=""></a>
+    <div id="main">
+        <div id="header">
+            <h1><span class="icon">!</span>500<span class="sub">Internal Server Error</span></h1>
+        </div>
+        <div id="content">
+            <h2>服务器内部错误！</h2>
+            <p style="padding:5px 20px;">当您看到这个页面,表示服务器内部错误,此网站可能遇到技术问题,无法执行您的请求,请稍后重试或联系管理员进行处理!</p>
+
+            <div id="detailInfo" style="display: none;">
+                <p style="padding:5px 20px;font-weight: bold;">
+                    文件服务内部错误
+                </p>
+                <p style="padding:5px 20px;word-break: break-all;">说明: <span id="msg"></span></p>
+            </div>
+
+            <div class="utilities">
+                <div class="input-container" style="font: 13px 'TeXGyreScholaRegular', Arial, sans-serif;color: #696969; text-shadow: 0 1px white;text-decoration: none;">
+                    <span id="totalSecond" style="color:red">15</span>秒后自动跳转…
+                </div>
+                <a class="button right" href="#" onclick="window.history.go(-1);return true;">返回...</a>
+                <a class="button right" href="mailto:hao474798383@163.com">联系管理员</a>
+                <a class="button right" href="#" onclick="showDetail()">错误信息</a>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+<!--定义js变量及方法-->
+<script language="javascript" type="text/javascript">
+
+    function showDetail() {
+        document.querySelector("#detailInfo").style.display = "block";
+    }
+
+    var second = document.getElementById('totalSecond').textContent;
+
+    if (navigator.appName.indexOf("Explorer") > -1) {
+        second = document.getElementById('totalSecond').innerText;
+    } else {
+        second = document.getElementById('totalSecond').textContent;
+    }
+
+    setInterval(redirect, 1000);
+
+    function redirect() {
+        if (second < 0) {
+            window.history.go(-1);
+        } else {
+            if (navigator.appName.indexOf("Explorer") > -1) {
+                document.getElementById('totalSecond').innerText = second--;
+            } else {
+                document.getElementById('totalSecond').textContent = second--;
+            }
+        }
+    }
+
+    var uri = window.location.href;
+    var params = uri.substr(uri.indexOf("?") + 1);
+    var paramsList = params.split("&");
+    var paramsObj = {};
+    for(var index in paramsList){
+        var keyValue = paramsList[index].split("=");
+        paramsObj[keyValue[0]] = keyValue[1];
+    }
+    let http;
+    if (window.XMLHttpRequest){
+        http = new XMLHttpRequest();
+    } else if(window.ActiveXObject){
+        http = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    http.onreadystatechange = () => {
+        if (http.readyState==4 && http.status == 200){
+            const result = JSON.parse(http.responseText);
+            document.querySelector("#msg").innerHTML = result.resMsg
+        }
+    }
+    http.open("GET", decodeURIComponent(paramsObj.host) + "/getThrowableInfo?uid=" + paramsObj.uid, true);
+    http.send();
+</script>
+
+</html>

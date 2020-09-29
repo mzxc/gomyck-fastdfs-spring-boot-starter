@@ -39,6 +39,10 @@ public class Constant {
     //整体文件锁
     public final static String FILE_LOCK = LOCK + "fileLock";
 
+    //异常信息
+    public final static String THROWABLE = "Throwable:";
+    //异常序列
+    public final static String EXCEPTION_ID = THROWABLE + "exceptionId";
 
     private Constant() {
 

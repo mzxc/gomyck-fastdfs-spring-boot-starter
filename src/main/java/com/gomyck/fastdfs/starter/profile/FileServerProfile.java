@@ -26,6 +26,11 @@ public class FileServerProfile {
 
     private Long chunkSize = 5L;
 
+    private boolean enableErrorAdvice = false;
+
+    //错误页 hostname, 一般来说, 就是当前的项目 hostname + port, 但是在有网关的情况下, 需要配置成网关, 或者代理服务的地址, 否则会出现被墙的问题
+    private String errorPageHostName = "";
+
     public String getFileServerURI(){
         return StringJudge.isNull(fileServerProtocol) ? "http" : fileServerProtocol + "://" + fileServerUrl;
     }
