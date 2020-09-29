@@ -22,10 +22,13 @@ public class FileServerProfile {
 
     private String groupId = "group1";
 
+    //最大下载文件数量
     private Integer maxDownloadFileNum = 100;
 
+    //分块大小 MB
     private Long chunkSize = 5L;
 
+    //是否开启异常处理增强
     private boolean enableErrorAdvice = false;
 
     //错误页 hostname, 一般来说, 就是当前的项目 hostname + port, 但是在有网关的情况下, 需要配置成网关, 或者代理服务的地址, 否则会出现被墙的问题
