@@ -22,6 +22,8 @@ public class FileServerProfile {
 
     private String groupId = "group1";
 
+    private long downloadChunkSize = 1024 * 1024; //下载速度 byte
+
     //最大下载文件数量
     private Integer maxDownloadFileNum = 100;
 

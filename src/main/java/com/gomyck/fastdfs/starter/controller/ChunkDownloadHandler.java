@@ -76,9 +76,6 @@ public class ChunkDownloadHandler {
     @Autowired
     FileServerProfile profile;
 
-    @Value("${gomyck.fastdfs.download-chunk-size: 1000000}")
-    private long chunkFileSize;
-
     private static final String THUMB_FLAG_TRUE = "1";
 
     /**
@@ -100,27 +97,27 @@ public class ChunkDownloadHandler {
         FileInfo remoteFileInfo = FDFSUtil.getFileInfoRemote(ffsc, fileInfo);
         long cycle = 0L;  //下载次数
         long offset = 0L; //当前偏移量
-        long downloadFileSize = chunkFileSize; //当前实际要下载的块大小
+        long downloadFileSize = profile.getDownloadChunkSize(); //当前实际要下载的块大小
         long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
         DownloadByteArray callback = new DownloadByteArray();
         //todo 如果文件大小 小于分块大小, 一次性下载
-        if (remoteFileSize <= chunkFileSize) {
+        if (remoteFileSize <= profile.getDownloadChunkSize()) {
             byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
             ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
             return;
         }
         for (; ; cycle = cycle + 1L) {
-            if ((cycle + 1) * chunkFileSize < remoteFileSize) {
+            if ((cycle + 1) * profile.getDownloadChunkSize() < remoteFileSize) {
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
                 boolean ifDownload = ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), false);
                 if (!ifDownload) return;
             } else {
-                downloadFileSize = remoteFileSize - (cycle * chunkFileSize);
+                downloadFileSize = remoteFileSize - (cycle * profile.getDownloadChunkSize());
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
                 ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
                 return;
             }
-            offset = offset + chunkFileSize; //偏移量改变
+            offset = offset + profile.getDownloadChunkSize(); //偏移量改变
         }
 
     }
@@ -188,12 +185,12 @@ public class ChunkDownloadHandler {
                 }
                 long cycle = 0L;  //下载次数
                 long offset = 0L; //当前偏移量
-                long downloadFileSize = chunkFileSize; //当前实际要下载的块大小
+                long downloadFileSize = profile.getDownloadChunkSize(); //当前实际要下载的块大小
                 long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
                 //todo 如果文件大小 小于分块大小, 一次性下载
                 String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
-                if (remoteFileSize <= chunkFileSize) {
+                if (remoteFileSize <= profile.getDownloadChunkSize()) {
                     byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
                     FDFSUtil.resolveDuplicate(zos, zipName, zipEntry);
                     zos.write(content);
@@ -203,19 +200,19 @@ public class ChunkDownloadHandler {
                 }
                 FDFSUtil.resolveDuplicate(zos, zipName, zipEntry);
                 for (; ; cycle = cycle + 1L) {
-                    if ((cycle + 1) * chunkFileSize < remoteFileSize) {
+                    if ((cycle + 1) * profile.getDownloadChunkSize() < remoteFileSize) {
                         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
                         zos.write(content);
                         zos.flush();
                     } else {
-                        downloadFileSize = remoteFileSize - (cycle * chunkFileSize);
+                        downloadFileSize = remoteFileSize - (cycle * profile.getDownloadChunkSize());
                         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), offset, downloadFileSize, callback);
                         zos.write(content);
                         zos.flush();
                         zos.closeEntry();
                         break;
                     }
-                    offset = offset + chunkFileSize; //偏移量改变
+                    offset = offset + profile.getDownloadChunkSize(); //偏移量改变
                 }
             }
             zos.finish();
