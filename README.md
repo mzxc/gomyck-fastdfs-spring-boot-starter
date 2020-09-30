@@ -54,9 +54,10 @@ gomyck:
 ```
 
 #### 3.在静态资源映射表中加入以下配置(可选, 重写resources.staticLocations时要根据实际配置决定是否加入下述代码)
+#### 请注意, 如果你的项目中存在 WebMvcConfigurationSupport 子类, 那么必须添加静态资源配置, 否则将请求不到本项目资源
 ```java
 @Configuration
-public class config extends WebMvcConfigurationSupport {
+public class Config extends WebMvcConfigurationSupport {
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
