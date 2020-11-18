@@ -44,6 +44,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 异常处理 handler, 使用 redirect 来重定向请求, 因为存在 form 表单提交下载(批量)
@@ -74,7 +75,7 @@ public class CkExceptionAdviceController {
         String key = Constant.EXCEPTION_ID + uuid;
         rc.set(key, ex.getMessage());
         rc.expireKeySeconds(key, 60);
-        return UrlBasedViewResolver.REDIRECT_URL_PREFIX + DataFilter.getFirstNotNull(fsp.getErrorPageHostName(), contextPath) + "/ck-fastdfs/view/error.html?uid=" + uuid + "&host=" + URLEncoder.encode(DataFilter.getFirstNotNull(fsp.getErrorPageHostName(), contextPath).toString(), "UTF-8");
+        return UrlBasedViewResolver.REDIRECT_URL_PREFIX + DataFilter.getFirstNotNull(fsp.getErrorPageHostName(), contextPath) + "/ck-fastdfs/view/error.html?uid=" + uuid + "&host=" + URLEncoder.encode(DataFilter.getFirstNotNull(fsp.getErrorPageHostName(), contextPath).toString(), StandardCharsets.UTF_8.toString());
     }
 
 }
