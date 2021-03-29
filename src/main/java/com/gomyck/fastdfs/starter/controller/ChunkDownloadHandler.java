@@ -163,11 +163,11 @@ public class ChunkDownloadHandler {
         if (downloadInfo == null || downloadInfo.getFiles().size() < 1) throw new IllegalParameterException("非法的参数, 下载文件数量必须大于 1");
         if (downloadInfo.getFiles().size() > profile.getMaxDownloadFileNum()) throw new DownloadFileNumException("下载文件数量过多");
         HttpServletResponse response = ResponseWriter.getResponse();
-        try {
+        try (ServletOutputStream outputStream = response.getOutputStream();
+             ZipOutputStream zos = new ZipOutputStream(outputStream)){
             response.setHeader("Content-Disposition", "attachment; filename=\"" + ResponseWriter.fileNameWrapper(downloadInfo.getZipFileName() + ".zip\""));
             response.setContentType(CkContentType.ZIP.getTypeValue());
-            ServletOutputStream outputStream = response.getOutputStream();
-            ZipOutputStream zos = new ZipOutputStream(outputStream);
+
             for (BatchDownLoadParameter.FileBatchDownload bdl : downloadInfo.getFiles()) {
                 DownloadByteArray callback = new DownloadByteArray();
                 CkFileInfo fileInfo = us.getFileByMessageDigest(bdl.getFileMd5());
