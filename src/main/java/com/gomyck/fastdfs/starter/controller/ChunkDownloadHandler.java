@@ -216,8 +216,6 @@ public class ChunkDownloadHandler {
                 }
             }
             zos.finish();
-            zos.close();
-            outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
