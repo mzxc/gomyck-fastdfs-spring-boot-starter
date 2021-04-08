@@ -14,6 +14,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
+ * 文件存储工具类
+ *
  * @author gomyck
  * @version 1.0.0
  */
