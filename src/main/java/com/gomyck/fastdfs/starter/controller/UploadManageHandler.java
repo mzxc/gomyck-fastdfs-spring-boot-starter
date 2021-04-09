@@ -71,7 +71,7 @@ public class UploadManageHandler {
         if(limit == null) limit = -1L;
         Map<String, Object> stringObjectMap = ParamUtil.initParams();
         stringObjectMap.put("fileServerUrl", fsp.getFileServerURI());
-        stringObjectMap.put("fileList", us.selectCompleteFileInfo(Integer.parseInt(PageUtil.getStartOfPage(pageIndex, limit) + ""), Integer.parseInt(PageUtil.getEndOfPage(pageIndex, limit) + "")));
+        stringObjectMap.put("fileList", us.selectCompleteFileInfo(PageUtil.getStartOfPage(pageIndex, limit), PageUtil.getEndOfPage(pageIndex, limit)));
         return R.ok(stringObjectMap);
     }
 

@@ -31,7 +31,7 @@ public interface UploadService {
      *
      * @return ListCkFileInfo 文件列表
      */
-    List<CkFileInfo> selectCompleteFileInfo(int start, int end);
+    List<CkFileInfo> selectCompleteFileInfo(Long start, Long end);
 
     /**
      * 删除文件(单个, 从已完成列表中删除)

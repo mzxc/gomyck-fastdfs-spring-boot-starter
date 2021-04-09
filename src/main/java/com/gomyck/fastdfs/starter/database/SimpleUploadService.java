@@ -42,7 +42,7 @@ public class SimpleUploadService implements UploadService {
     }
 
     @Override
-    public List<CkFileInfo> selectCompleteFileInfo(int start, int end) {
+    public List<CkFileInfo> selectCompleteFileInfo(Long start, Long end) {
         List<String> fileList;
         try {
             rs.startDoIt();

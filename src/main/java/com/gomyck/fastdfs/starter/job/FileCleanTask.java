@@ -35,6 +35,7 @@ import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.CkDateUtil;
 import com.gomyck.util.R;
 import com.gomyck.util.StringJudge;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * 清理过期的文件(只针对加入了过期标志的文件信息)
+ *
  * @author gomyck
  * @version 1.0.0
  * @since 2020-04-15
  */
 @Component
+@Slf4j
 public class FileCleanTask {
 
     @Autowired
@@ -64,13 +68,11 @@ public class FileCleanTask {
     @Autowired
     RedisCache rc;
 
-    Logger log = LoggerFactory.getLogger(FileCleanTask.class);
-
     @Scheduled(cron = "0 */30 * * * *")
     @RedisManager
     public void cleanTempFile(){
         String expireFile = null;
-        List<CkFileInfo> ckFileInfos = uploadService.selectCompleteFileInfo(0, -1);
+        List<CkFileInfo> ckFileInfos = uploadService.selectCompleteFileInfo(0L, -1L);
         if(ckFileInfos != null && ckFileInfos.size() > 0){
             expireFile = ckFileInfos.stream().filter(e -> {
                 Long expireTime = e.getExpireTime();
@@ -82,9 +84,7 @@ public class FileCleanTask {
                 }
             }).map(CkFileInfo::getFileMd5).collect(Collectors.joining(","));
         }
-        log.info("==========开始清理 已完成 列表==========");
         doClean(expireFile);
-        log.info("==========已完成清理 已完成 列表==========");
         Set<String> keys = rc.keysPattern(Constant.FILE_INFO + "*");
         if(keys != null) {
             expireFile = keys.stream().filter(e -> {
@@ -98,18 +98,14 @@ public class FileCleanTask {
                 }
             }).map(e -> e.replaceAll(Constant.FILE_INFO, "")).collect(Collectors.joining(","));
         }
-        log.info("==========开始清理 临时 列表==========");
         doClean(expireFile);
-        log.info("==========已完成清理 临时 列表==========");
     }
 
     private void doClean(String expireFile) {
         if(StringJudge.isNull(expireFile)) return;
         log.info("开始清理过期文件: {}", expireFile);
         R r = uploadManageHandler.batchDelFile(expireFile);
-        log.info("==============================================");
         log.info("==========清理结束, 返回结果为: {}==========", r);
-        log.info("==============================================");
     }
 
 
