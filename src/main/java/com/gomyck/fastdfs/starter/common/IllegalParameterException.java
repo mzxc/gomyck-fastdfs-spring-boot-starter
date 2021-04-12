@@ -22,10 +22,16 @@
 package com.gomyck.fastdfs.starter.common;
 
 /**
- * @author gomyck QQ:474798383
- * @version [版本号/1.0]
+ * 非法参数异常
  *
- * @since [2019-07-30]
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
+ * @version [1.0.0]
+ * @since 2021/4/12
  */
 public class IllegalParameterException extends RuntimeException {
 

@@ -51,9 +51,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @author gomyck QQ:474798383
- * @version [1.0]
- * @since [2019-07-28]
+ * 分块下载控制器, 可以分块下载文件, 可以控制下载带宽
+ *
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
+ * @version [1.0.0]
+ * @since 2021/4/12
  */
 @Controller
 @RequestMapping("download/chunkDownload")
