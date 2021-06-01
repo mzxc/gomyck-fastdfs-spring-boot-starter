@@ -50,9 +50,14 @@ import java.nio.charset.StandardCharsets;
  * 异常处理 handler, 使用 redirect 来重定向请求, 因为存在 form 表单提交下载(批量)
  * 如果不重定向, 会导致 method not support 的错误
  *
- * @author gomyck qq: 474798383 blog: https://blog.gomyck.com
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
  * @version [1.0.0]
- * @since 2020/9/29
+ * @since 2021/6/1
  */
 @ControllerAdvice
 @ConditionalOnProperty(value = "gomyck.fastdfs.enable-error-advice", havingValue = "true")
