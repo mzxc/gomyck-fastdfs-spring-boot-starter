@@ -38,10 +38,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * 文件上传管理
+ *
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
+ * @version [1.0.0]
+ * @since 2021/6/22
+ */
 @Controller
 @RequestMapping("upload/manage")
 public class UploadManageHandler {

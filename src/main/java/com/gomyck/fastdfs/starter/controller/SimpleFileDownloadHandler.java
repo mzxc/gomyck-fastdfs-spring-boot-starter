@@ -35,8 +35,7 @@ import com.gomyck.util.CkContentType;
 import com.gomyck.util.FileUtil;
 import com.gomyck.util.ResponseWriter;
 import com.gomyck.util.StringJudge;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -53,15 +52,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
+ * 简单文件下载器
+ *
  * @author gomyck QQ:474798383
  * @version [1.0]
  * @since [2019-07-30]
  */
+@Slf4j
 @Controller
 @RequestMapping("download/simpleDownload")
 public class SimpleFileDownloadHandler {
-
-    Logger logger = LoggerFactory.getLogger(SimpleFileDownloadHandler.class);
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
