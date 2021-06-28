@@ -14,10 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author gomyck QQ:474798383
- * @version [版本号/1.0]
+ * 简单文件上传 service
  *
- * @since [2019-07-24]
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
+ * @version [1.0.0]
+ * @since 2021/6/28
  */
 public class SimpleUploadService implements UploadService {
 
