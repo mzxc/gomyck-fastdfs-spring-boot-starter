@@ -28,9 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author gomyck QQ:474798383
- * @version [1.0]
- * @since [2019-08-06]
+ * 批量下载参数
+ *
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
+ * @version [1.0.0]
+ * @since 2021/7/5
  */
 @Data
 public class BatchDownLoadParameter {
