@@ -7,10 +7,16 @@ import com.gomyck.util.StringJudge;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author gomyck QQ:474798383
- * @version [版本号/1.0]
+ * 缓存文件锁
  *
- * @since [2019-07-25]
+ * @author gomyck
+ * --------------------------------
+ * | qq: 474798383                 |
+ * | email: hao474798383@163.com   |
+ * | blog: https://blog.gomyck.com |
+ * --------------------------------
+ * @version [1.0.0]
+ * @since 2021/7/13
  */
 public class SimpleRedisFileLock implements FileLock {
 
