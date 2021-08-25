@@ -1,6 +1,6 @@
 ## 开始使用 
 
-### 当前MASTER为1.1.4-SNAPSHOT版本
+### 当前MASTER为1.1.5-SNAPSHOT版本
 
 如果使用 SNAPSHOT 版本 , 请勾选 develop-fastdfs
 
@@ -12,7 +12,7 @@
 <dependency>
     <groupId>com.gomyck</groupId>
     <artifactId>gomyck-fastdfs-spring-boot-starter</artifactId>
-    <version>1.1.3-RELEASE</version>
+    <version>1.1.4-RELEASE</version>
 </dependency>
 ```
 #### 2.编辑yml文件(以下为全量配置):
