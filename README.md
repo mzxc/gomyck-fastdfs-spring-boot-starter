@@ -1,3 +1,5 @@
+## 有偿提供科学上网渠道, 查资料更便捷(小范围, 更稳定可靠 https://blog.gomyck.com/about/)
+
 ## 开始使用 
 
 ### 当前MASTER为1.1.5-SNAPSHOT版本
