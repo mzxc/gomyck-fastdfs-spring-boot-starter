@@ -1,4 +1,4 @@
-## 有偿提供科学上网渠道, 查资料更便捷(小范围, 更稳定可靠 https://blog.gomyck.com/about/)
+## 提供科学查资料渠道, 查资料更便捷(小范围, 更稳定可靠 https://blog.gomyck.com/about/)
 
 ## 开始使用 
 
