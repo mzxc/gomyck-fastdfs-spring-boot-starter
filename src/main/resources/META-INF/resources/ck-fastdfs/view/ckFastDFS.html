@@ -27,6 +27,9 @@
         <button id="btn4" class="upBtn" >点击上传4</button >
     </div >
 
+    <input type="file" name="file" onchange="showPreview(this)" />
+    <img id="portrait" src="" width="70" height="75">
+
     <div style="margin-top: 20px;font-size: 20px;color: #1b6d85" >文件上传列表:</div >
     <table id="resTable" class="table table-striped table-condensed table-bordered" style="table-layout:fixed" >
         <tr >
@@ -44,7 +47,22 @@
 </body >
 </html >
 
+
 <script >
+    var imgCFD;
+    function showPreview(source) {
+        var file = source.files[0];
+
+        imgCFD.addFiles(file);
+
+        if(window.FileReader) {
+            var fr = new FileReader();
+            fr.onloadend = function(e) {
+                document.getElementById("portrait").src = e.target.result;
+            };
+            fr.readAsDataURL(file);
+        }
+    }
 
     //------------------------------------CKFASTDFS配置开始--------------------------------------------------------------
 
@@ -76,6 +94,13 @@
             changeBar: function (refer, file, progressVal) {
                 console.log("进度条改变: " + refer + "|||" + file.id + "|||" + progressVal);
             }
+        },
+        uploaderInited: function(_this){
+            console.log("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓");
+            console.log(_this);
+            console.log("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑");
+            imgCFD = _this;
+            //_this.addFiles(new File());
         },
         uploadListener: {
             //添加文件信息

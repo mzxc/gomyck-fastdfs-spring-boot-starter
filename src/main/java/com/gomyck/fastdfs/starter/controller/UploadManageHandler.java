@@ -21,6 +21,7 @@
  */
 package com.gomyck.fastdfs.starter.controller;
 
+import com.github.tobato.fastdfs.exception.FdfsServerException;
 import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
@@ -102,9 +103,11 @@ public class UploadManageHandler {
         }
         try{
             storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + File.separator, ""));
-        }catch (Exception e){
-            e.printStackTrace();
-            return R.error(R._500, e.getMessage());
+        }catch (FdfsServerException e){
+            if(e.getErrorCode() != 2) {
+                e.printStackTrace();
+                return R.error(R._500, e.getMessage());
+            }
         }
         us.delFile(fileInfo);
         return R.ok();

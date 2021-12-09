@@ -55,6 +55,10 @@ class CkFastDFS {
          */
         this.uploadProgressBar = null;
         /**
+         * uploader 初始化成功事件
+         */
+        this.uploaderInited = option.uploaderInited;
+        /**
          * 上传监听 参照 initUploaderListener()
          */
         this.uploadListener = null;
@@ -252,6 +256,7 @@ class CkFastDFS {
             _this.uploader.ckInstance       = _this;
             CkFastDFS.prototype.chunkMap.put(_this.uploadButton.buttonId, _this.uploader);
             _this.uploaderStatus.resolve();
+            _this.uploaderInited && _this.uploaderInited(_this);
         });
         return uploaderId;
     }
@@ -609,7 +614,9 @@ class CkFastDFS {
     }
 
     addFiles(files) {
-        if(files) this.uploader.addFiles(files);
+        if(files) {
+            this.uploader.addFiles(files);
+        }
     }
 
 }
