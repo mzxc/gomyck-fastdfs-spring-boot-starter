@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 简单文件上传 service
@@ -37,7 +38,6 @@ public class SimpleUploadService implements UploadService {
             rs.startDoIt();
             Boolean r = rs.oneTime(e -> {
                 String _fileInfo = JSONObject.toJSONString(fileInfo);
-                e.lpush(Constant.COMPLETED_LIST, _fileInfo);
                 e.hset(Constant.COMPLETED_MAP, fileInfo.getFileMd5(), _fileInfo);
                 return true;
             });
@@ -49,17 +49,17 @@ public class SimpleUploadService implements UploadService {
 
     @Override
     public List<CkFileInfo> selectCompleteFileInfo(Long start, Long end) {
-        List<String> fileList;
+        Map<String, String> fileList;
         try {
             rs.startDoIt();
-            fileList = rs.lrange(Constant.COMPLETED_LIST, start, end);
+            fileList = rs.hGetAll(Constant.COMPLETED_MAP);
         } finally {
             rs.finishDoIt();
         }
         List<CkFileInfo> result = new ArrayList<>();
         if(fileList == null) return null;
-        for(String fileInfo : fileList){
-            result.add(JSONObject.parseObject(fileInfo, CkFileInfo.class));
+        for(String key : fileList.keySet()){
+            result.add(JSONObject.parseObject(fileList.get(key), CkFileInfo.class));
         }
         return result;
     }
@@ -69,7 +69,6 @@ public class SimpleUploadService implements UploadService {
         try {
             rs.startDoIt();
             Boolean r = rs.oneTime(e -> {
-                e.lrem(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(fileInfo));
                 e.hdel(Constant.COMPLETED_MAP, fileInfo.getFileMd5());
                 return true;
             });
@@ -85,11 +84,9 @@ public class SimpleUploadService implements UploadService {
             rs.startDoIt();
             Boolean r = rs.oneTime(e -> {
                 if (completeStatus) {
-                    e.lrem(Constant.COMPLETED_LIST, 1, JSONObject.toJSONString(messageDigest));
                     e.hdel(Constant.COMPLETED_MAP, messageDigest.getFileMd5());
                     messageDigest.setExpireTime(null);
                     String _fileInfo = JSONObject.toJSONString(messageDigest);
-                    e.lpush(Constant.COMPLETED_LIST, _fileInfo);
                     e.hset(Constant.COMPLETED_MAP, messageDigest.getFileMd5(), _fileInfo);
                 } else {
                     e.del(Constant.FILE_INFO + messageDigest.getFileMd5());
