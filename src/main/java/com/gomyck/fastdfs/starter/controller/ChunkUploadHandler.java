@@ -112,7 +112,7 @@ public class ChunkUploadHandler {
         String fileLock = Constant.FILE_LOCK + fileInfo.getFileMd5();
         if (StringJudge.isNull(fileInfo.getChunk())) fileInfo.setChunk("0");
         if (StringJudge.isNull(fileInfo.getChunks())) fileInfo.setChunks("0");
-        //todo 查询历史文件, 这个一般来说第一次查是没有的, 但是第二次续传一定有, 所以整体流程以这个对象操作为主
+        // 查询历史文件, 这个一般来说第一次查是没有的, 但是第二次续传一定有, 所以整体流程以这个对象操作为主
         CkFileInfo historyFileInfo = us.getFileUploadStatus(fileInfo.getFileMd5());
         //设置文件分组
         if(historyFileInfo != null){ //如果历史文件不为空, 把当前的分组设置为原来的分组, 防止前端传过来的分组与历史不符
@@ -167,7 +167,7 @@ public class ChunkUploadHandler {
                         historyFileInfo = us.getFileUploadStatus(fileInfo.getFileMd5());
                         try {
                             //appendFileStorageClient.modifyFile(fileUploadStatus.getGroup(), fileUploadStatus.getUploadPath(), file.getInputStream(), file.getSize(), (hasUploadChunk + 1) * fileInfo.getChunkSize());
-                            //todo 修复丢失字节的 BUG
+                            // 修复丢失字节的 BUG
                             appendFileStorageClient.appendFile(historyFileInfo.getGroup(), historyFileInfo.getUploadPath(), file.getInputStream(), file.getSize());
                         } catch (Exception e) {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
@@ -202,7 +202,7 @@ public class ChunkUploadHandler {
         if(historyFileInfo.isThumbFlag() && historyFileInfo.getType().contains("image")){
             try{
                 DownloadByteArray callback = new DownloadByteArray();
-                //todo 这里要下载一下, 因为主流程为断点续传, 图片与略缩图上传不支持断点续传, 所以要全部传完之后, 统一上传
+                // 这里要下载一下, 因为主流程为断点续传, 图片与略缩图上传不支持断点续传, 所以要全部传完之后, 统一上传
                 byte[] bytes = simpleFileDownloadHandler.downloadFile(historyFileInfo.getGroup(), historyFileInfo.getUploadPath(), callback);
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
                 FastImageFile.Builder builder = new FastImageFile.Builder();
@@ -218,11 +218,11 @@ public class ChunkUploadHandler {
                 FastImageFile imgFile = builder.build();
                 builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), FileUtil.getFileSuffixNameByFileName(historyFileInfo.getName()));
                 StorePath storePath = simpleFileDownloadHandler.uploadImage(imgFile);
-                simpleFileDownloadHandler.deleteFile(storePath.getGroup(), storePath.getPath()); //todo 删除略缩图的原图
+                simpleFileDownloadHandler.deleteFile(storePath.getGroup(), storePath.getPath()); // 删除略缩图的原图
                 historyFileInfo.setThumbImgPath(imgFile.getThumbImagePath(storePath.getPath()));
                 log.info("thumb img path is: {}", historyFileInfo.getThumbImgPath());
             }catch (Exception imgError){
-                //todo 一般来说, 图片格式不受支持则会报错
+                // 一般来说, 图片格式不受支持则会报错
                 log.error(imgError.toString());
             }
         }

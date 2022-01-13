@@ -27,24 +27,24 @@ import com.github.tobato.fastdfs.domain.proto.storage.DownloadByteArray;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.gomyck.fastdfs.starter.common.DownloadFileNumException;
 import com.gomyck.fastdfs.starter.common.FDFSUtil;
-import com.gomyck.fastdfs.starter.common.FileNotFoundException;
 import com.gomyck.fastdfs.starter.common.IllegalParameterException;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
-import com.gomyck.util.*;
+import com.gomyck.util.CkContentType;
+import com.gomyck.util.FileUtil;
+import com.gomyck.util.ResponseWriter;
+import com.gomyck.util.StringJudge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -107,7 +107,7 @@ public class ChunkDownloadHandler {
         long downloadFileSize = profile.getDownloadChunkSize(); //当前实际要下载的块大小
         long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
         DownloadByteArray callback = new DownloadByteArray();
-        //todo 如果文件大小 小于分块大小, 一次性下载
+        // 如果文件大小 小于分块大小, 一次性下载
         if (remoteFileSize <= profile.getDownloadChunkSize()) {
             byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);
             ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
@@ -194,7 +194,7 @@ public class ChunkDownloadHandler {
                 long offset = 0L; //当前偏移量
                 long downloadFileSize = profile.getDownloadChunkSize(); //当前实际要下载的块大小
                 long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
-                //todo 如果文件大小 小于分块大小, 一次性下载
+                // 如果文件大小 小于分块大小, 一次性下载
                 String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
                 if (remoteFileSize <= profile.getDownloadChunkSize()) {
