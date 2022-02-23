@@ -106,9 +106,9 @@ public class FileCleanTask {
 
     private void doClean(String expireFile) {
         if(StringJudge.isNull(expireFile)) return;
-        log.info("开始清理过期文件: {}", expireFile);
+        log.info("clear expire file start : {}", expireFile);
         R r = uploadManageHandler.batchDelFile(expireFile);
-        log.info("==========清理结束, 返回结果为: {}==========", r);
+        log.info("==========clear expire file end, drop file is : {}==========", r);
     }
 
 
