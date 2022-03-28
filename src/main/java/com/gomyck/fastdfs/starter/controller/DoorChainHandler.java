@@ -20,13 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("download/simpleDownload")
 public class DoorChainHandler {
 
-    /**
-     *
-     *
-     *
-     * @param md5s
-     * @return
-     */
     public R getDoorChain(String[] md5s){
 
 

@@ -58,8 +58,10 @@ public class CkErrorController {
 
 
     /**
-     * 返回错误信息
-     * @return
+     * 返回错误
+     *
+     * @param uid uid
+     * @return R
      */
     @GetMapping("getThrowableInfo")
     @ResponseBody
