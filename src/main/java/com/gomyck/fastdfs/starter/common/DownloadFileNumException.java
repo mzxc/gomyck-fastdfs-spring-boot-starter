@@ -14,6 +14,7 @@ package com.gomyck.fastdfs.starter.common;
  */
 public class DownloadFileNumException extends RuntimeException {
 
+    //下载数量异常
     public DownloadFileNumException(String message) {
         super(message);
     }

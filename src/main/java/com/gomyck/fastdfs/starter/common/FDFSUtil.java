@@ -6,8 +6,7 @@ import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.FileUtil;
 import com.gomyck.util.IdUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.zip.ZipEntry;
@@ -25,14 +24,19 @@ import java.util.zip.ZipOutputStream;
  * @version [1.0.0]
  * @since 2021/4/9
  */
+@Slf4j
 public class FDFSUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(FDFSUtil.class);
-
+    /**
+     * 获取文件信息
+     * @param us 上传 service
+     * @param fileMd5 文件摘要
+     * @return 文件信息
+     */
     public static CkFileInfo getFileInfo(UploadService us, String fileMd5) {
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
         if (fileInfo == null) {
-            logger.error("从数据库查询文件信息出错, 文件MD5: {}", fileMd5);
+            log.error("从数据库查询文件信息出错, 文件MD5: {}", fileMd5);
             throw new FileNotFoundException("数据列表中不存在该文件");
         }
         return fileInfo;
@@ -44,7 +48,7 @@ public class FDFSUtil {
             remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
             if (remoteFileInfo == null) throw new FileNotFoundException("文件服务器中不存在该文件");
         } catch (Exception e) {
-            logger.error("从文件服务器查询文件信息出错, 分组: {}, 路径: {}", fileInfo.getGroup(), fileInfo.getUploadPath());
+            log.error("从文件服务器查询文件信息出错, 分组: {}, 路径: {}", fileInfo.getGroup(), fileInfo.getUploadPath());
             throw new FileNotFoundException("文件服务器中不存在该文件");
         }
         return remoteFileInfo;
