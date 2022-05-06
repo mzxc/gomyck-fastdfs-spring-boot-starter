@@ -35,6 +35,11 @@ package com.gomyck.fastdfs.starter.common;
  */
 public class FileNotFoundException extends RuntimeException {
 
+    /**
+     * 文件未找到异常
+     *
+     * @param message 异常信息
+     */
     public FileNotFoundException(String message) {
         super(message);
     }
