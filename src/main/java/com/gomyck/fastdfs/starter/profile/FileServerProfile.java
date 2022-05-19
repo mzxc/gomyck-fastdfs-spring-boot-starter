@@ -62,6 +62,10 @@ public class FileServerProfile {
      */
     private String errorPageHostName = "";
 
+    /**
+     * 获取文件服务 URI
+     * @return
+     */
     public String getFileServerURI(){
         return StringJudge.isNull(fileServerProtocol) ? "http" : fileServerProtocol + "://" + fileServerUrl;
     }
