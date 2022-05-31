@@ -31,6 +31,13 @@ public class SimpleUploadService implements UploadService {
     @Autowired
     RedisCache rs;
 
+    /**
+     * 保存文件信息
+     *
+     * @param fileInfo 文件信息
+     *
+     * @return 是否成功
+     */
     @Override
     public R saveUploadInfo(CkFileInfo fileInfo) {
         //持久化上传完成文件,也可以存储在mysql中
@@ -47,6 +54,14 @@ public class SimpleUploadService implements UploadService {
         }
     }
 
+    /**
+     * 查询已完成文件信息
+     *
+     * @param start 开始位置
+     * @param end   结束位置
+     *
+     * @return 文件列表
+     */
     @Override
     public List<CkFileInfo> selectCompleteFileInfo(Long start, Long end) {
         Map<String, String> fileList;
@@ -64,6 +79,13 @@ public class SimpleUploadService implements UploadService {
         return result;
     }
 
+    /**
+     * 删除文件
+     *
+     * @param fileInfo 文件信息
+     *
+     * @return 是否成功
+     */
     @Override
     public R delFile(CkFileInfo fileInfo) {
         try {
