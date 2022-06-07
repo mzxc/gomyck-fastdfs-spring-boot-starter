@@ -107,6 +107,11 @@ public class FileCleanTask {
         doClean(expireFile);
     }
 
+    /**
+     * 清除方法
+     *
+     * @param expireFile 过期的文件
+     */
     private void doClean(String expireFile) {
         if(StringJudge.isNull(expireFile)) return;
         log.info("clear expire file start : {}", expireFile);
