@@ -71,6 +71,9 @@ public class FileCleanTask {
     @Autowired
     RedisCache rc;
 
+    /**
+     * 删除临时文件
+     */
     @Scheduled(cron = "0 */30 * * * *")
     @RedisManager
     public void cleanTempFile(){
