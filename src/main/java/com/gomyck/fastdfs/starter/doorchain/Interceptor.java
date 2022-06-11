@@ -24,6 +24,11 @@ package com.gomyck.fastdfs.starter.doorchain;
  */
 public interface Interceptor {
 
+    /**
+     * 拦截该请求
+     *
+     * @return 是否放过请求
+     */
     boolean intercepted();
 
 }

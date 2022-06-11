@@ -22,6 +22,12 @@ package com.gomyck.fastdfs.starter.doorchain;
  */
 public interface Validator<T> {
 
+    /**
+     * 验证
+     *
+     * @param token token
+     * @return 是否成功
+     */
     boolean verifyIt(T token);
 
 }
