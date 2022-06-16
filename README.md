@@ -1,4 +1,3 @@
-## 提供科学查资料渠道, 查资料更便捷(小范围, 更稳定可靠 https://blog.gomyck.com/about/)
 
 ## 开始使用 
 
@@ -200,3 +199,5 @@ cfd.cancleUpload(file);   //取消指定文件的上传
 > 1. 文件下载防盗链实现(基于当前服务访问文件)  
 > 2. fastdfs token获取(直连文件服务访问文件)     
 > ......   
+
+## 提供科学查资料渠道, 查资料更便捷(小范围, 更稳定可靠 https://blog.gomyck.com/about/)
