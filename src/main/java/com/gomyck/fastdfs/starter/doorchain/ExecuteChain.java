@@ -23,6 +23,9 @@ package com.gomyck.fastdfs.starter.doorchain;
  */
 public interface ExecuteChain {
 
+    /**
+     * 执行防盗链
+     */
     void execute();
 
 }

@@ -27,6 +27,12 @@ public class TokenValidator implements Validator<String>{
     @Autowired
     RedisCache rs;
 
+    /**
+     * 验证方法
+     *
+     * @param token token
+     * @return 是否成功
+     */
     @Override
     public boolean verifyIt(final String token) {
         return StringJudge.notNull(rs.get(token));
