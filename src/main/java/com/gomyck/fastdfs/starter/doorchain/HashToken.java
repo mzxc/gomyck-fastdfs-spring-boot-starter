@@ -21,6 +21,11 @@ package com.gomyck.fastdfs.starter.doorchain;
 public class HashToken implements Token{
 
 
+    /**
+     * 验证 hash token 是否过期
+     *
+     * @return 是否过期
+     */
     @Override
     public boolean valid() {
         return false;
