@@ -1,5 +1,9 @@
 ## 提供科学查资料渠道, 查资料更便捷(小范围, 更稳定可靠 https://blog.gomyck.com/about/)
 
+Thanks for JetBrains IDEA 
+
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="150">
+
 ## 开始使用 
 
 ### 当前MASTER为1.1.5-SNAPSHOT版本
