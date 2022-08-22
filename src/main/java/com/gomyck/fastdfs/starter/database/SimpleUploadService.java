@@ -2,10 +2,10 @@
 
 package com.gomyck.fastdfs.starter.database;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gomyck.cache.redis.starter.core.redis.RedisCache;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
+import com.gomyck.serialize.CKJSON;
 import com.gomyck.util.R;
 import com.gomyck.util.StringJudge;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class SimpleUploadService implements UploadService {
         try {
             rs.startDoIt();
             Boolean r = rs.oneTime(e -> {
-                String _fileInfo = JSONObject.toJSONString(fileInfo);
+                String _fileInfo = CKJSON.getInstance().toJsonString(fileInfo);
                 e.hset(Constant.COMPLETED_MAP, fileInfo.getFileMd5(), _fileInfo);
                 return true;
             });
@@ -74,7 +74,7 @@ public class SimpleUploadService implements UploadService {
         List<CkFileInfo> result = new ArrayList<>();
         if(fileList == null) return null;
         for(String key : fileList.keySet()){
-            result.add(JSONObject.parseObject(fileList.get(key), CkFileInfo.class));
+            result.add(CKJSON.getInstance().parseObject(fileList.get(key), CkFileInfo.class));
         }
         return result;
     }
@@ -108,12 +108,12 @@ public class SimpleUploadService implements UploadService {
                 if (completeStatus) {
                     e.hdel(Constant.COMPLETED_MAP, messageDigest.getFileMd5());
                     messageDigest.setExpireTime(null);
-                    String _fileInfo = JSONObject.toJSONString(messageDigest);
+                    String _fileInfo = CKJSON.getInstance().toJsonString(messageDigest);
                     e.hset(Constant.COMPLETED_MAP, messageDigest.getFileMd5(), _fileInfo);
                 } else {
                     e.del(Constant.FILE_INFO + messageDigest.getFileMd5());
                     messageDigest.setExpireTime(null);
-                    e.set(Constant.FILE_INFO + messageDigest.getFileMd5(), JSONObject.toJSONString(messageDigest));
+                    e.set(Constant.FILE_INFO + messageDigest.getFileMd5(), CKJSON.getInstance().toJsonString(messageDigest));
                 }
                 return true;
             });
@@ -127,7 +127,7 @@ public class SimpleUploadService implements UploadService {
     public R saveFileUploadStatus(CkFileInfo fileInfo) {
         try {
             rs.startDoIt();
-            rs.set(Constant.FILE_INFO + fileInfo.getFileMd5(), JSONObject.toJSONString(fileInfo));
+            rs.set(Constant.FILE_INFO + fileInfo.getFileMd5(), CKJSON.getInstance().toJsonString(fileInfo));
         } finally {
             rs.finishDoIt();
         }
@@ -144,7 +144,7 @@ public class SimpleUploadService implements UploadService {
             rs.finishDoIt();
         }
         if(StringJudge.isNull(string)) return null;
-        return JSONObject.parseObject(string, CkFileInfo.class);
+        return CKJSON.getInstance().parseObject(string, CkFileInfo.class);
     }
 
     @Override
@@ -168,6 +168,6 @@ public class SimpleUploadService implements UploadService {
         } finally {
             rs.finishDoIt();
         }
-        return JSONObject.parseObject(fileInfo, CkFileInfo.class);
+        return CKJSON.getInstance().parseObject(fileInfo, CkFileInfo.class);
     }
 }
