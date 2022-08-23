@@ -6,7 +6,7 @@ Thanks for JetBrains IDEA
 
 ## 开始使用 
 
-### 当前MASTER为1.1.5-SNAPSHOT版本
+### 当前MASTER为2.0.1-SNAPSHOT版本
 
 如果使用 SNAPSHOT 版本 , 请勾选 develop-fastdfs
 
