@@ -34,8 +34,8 @@ import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.CkContentType;
 import com.gomyck.util.FileUtil;
+import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.ResponseWriter;
-import com.gomyck.util.StringJudge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,9 +98,9 @@ public class ChunkDownloadHandler {
     public void chunkDownload(String fileMd5, String fileName, String thumbFlag) {
         CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, fileMd5);
         // 如果自定义文件名 则替换
-        if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
+        if(ObjectJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         // 如果是下载略缩图 则替换下载路径
-        if(StringJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals(THUMB_FLAG_TRUE)) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
+        if(ObjectJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals(THUMB_FLAG_TRUE)) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
         FileInfo remoteFileInfo = FDFSUtil.getFileInfoRemote(ffsc, fileInfo);
         long cycle = 0L;  //下载次数
         long offset = 0L; //当前偏移量
@@ -195,7 +195,7 @@ public class ChunkDownloadHandler {
                 long downloadFileSize = profile.getDownloadChunkSize(); //当前实际要下载的块大小
                 long remoteFileSize = remoteFileInfo.getFileSize(); //文件服务器存储的文件大小 (byte为单位)
                 // 如果文件大小 小于分块大小, 一次性下载
-                String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
+                String zipName = bdl.getZipSrc() + (ObjectJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
                 if (remoteFileSize <= profile.getDownloadChunkSize()) {
                     byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), 0, remoteFileSize, callback);

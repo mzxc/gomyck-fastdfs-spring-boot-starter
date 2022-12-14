@@ -110,15 +110,15 @@ public class ChunkUploadHandler {
         if(!checkInfo.isOk() || R._302 == checkInfo.getResCode()) return checkInfo;
         boolean ifHasLock = false;
         String fileLock = Constant.FILE_LOCK + fileInfo.getFileMd5();
-        if (StringJudge.isNull(fileInfo.getChunk())) fileInfo.setChunk("0");
-        if (StringJudge.isNull(fileInfo.getChunks())) fileInfo.setChunks("0");
+        if (ObjectJudge.isNull(fileInfo.getChunk())) fileInfo.setChunk("0");
+        if (ObjectJudge.isNull(fileInfo.getChunks())) fileInfo.setChunks("0");
         // 查询历史文件, 这个一般来说第一次查是没有的, 但是第二次续传一定有, 所以整体流程以这个对象操作为主
         CkFileInfo historyFileInfo = us.getFileUploadStatus(fileInfo.getFileMd5());
         //设置文件分组
         if(historyFileInfo != null){ //如果历史文件不为空, 把当前的分组设置为原来的分组, 防止前端传过来的分组与历史不符
             fileInfo.setGroup(historyFileInfo.getGroup());
         }else{
-            if(StringJudge.isNull(fileInfo.getGroup())){ //如果前端传过来的分组是空, 则设置配置的分组
+            if(ObjectJudge.isNull(fileInfo.getGroup())){ //如果前端传过来的分组是空, 则设置配置的分组
                 fileInfo.setGroup(fsp.getGroupId());
             }
         }
@@ -132,7 +132,7 @@ public class ChunkUploadHandler {
             int hasUploadChunk = 0; //查询当前文件存储到第几块了
             if(historyFileInfo != null){
                 String chunk = historyFileInfo.getChunk();
-                if(StringJudge.notNull(chunk)){
+                if(ObjectJudge.notNull(chunk)){
                     hasUploadChunk = Integer.parseInt(chunk);
                 }
             }else{
@@ -208,9 +208,9 @@ public class ChunkUploadHandler {
                 FastImageFile.Builder builder = new FastImageFile.Builder();
                 builder.toGroup(historyFileInfo.getGroup());
                 builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), FileUtil.getFileSuffixNameByFileName(historyFileInfo.getName()));
-                if(StringJudge.notNull(historyFileInfo.getThumbImgPercent()))  {
+                if(ObjectJudge.notNull(historyFileInfo.getThumbImgPercent()))  {
                     builder.withThumbImage(historyFileInfo.getThumbImgPercent());
-                } else if(StringJudge.notNull(historyFileInfo.getThumbImgWidth(), historyFileInfo.getThumbImgHeight())) {
+                } else if(ObjectJudge.notNull(historyFileInfo.getThumbImgWidth(), historyFileInfo.getThumbImgHeight())) {
                     builder.withThumbImage(historyFileInfo.getThumbImgWidth(), historyFileInfo.getThumbImgHeight());
                 } else {
                     builder.withThumbImage();
@@ -233,7 +233,7 @@ public class ChunkUploadHandler {
     @ResponseBody
     public R checkFile(String fileMd5) {
         ServiceCheck.uploadServiceCheck(us);
-        if (StringJudge.isNull(fileMd5)) return R.error(R._500, "fileMd5不能为空");
+        if (ObjectJudge.isNull(fileMd5)) return R.error(R._500, "fileMd5不能为空");
         String fileLock = Constant.FILE_LOCK + fileMd5;
         if(fl.ifLock(fileLock)){
             return R.error(R._500, "当前文件正在被上传, 请稍后再试");
@@ -243,7 +243,7 @@ public class ChunkUploadHandler {
             return R.ok(R._302, fileByMessageDigest);
         }
         CkFileInfo fileUploadStatus = us.getFileUploadStatus(fileMd5);
-        if (fileUploadStatus != null && StringJudge.notNull(fileUploadStatus.getChunk())) {
+        if (fileUploadStatus != null && ObjectJudge.notNull(fileUploadStatus.getChunk())) {
             return R.ok(fileUploadStatus);
         } else {
             fileUploadStatus = new CkFileInfo();

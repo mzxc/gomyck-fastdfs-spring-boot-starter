@@ -6,8 +6,8 @@ import com.gomyck.cache.redis.starter.core.redis.RedisCache;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.serialize.CKJSON;
+import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.R;
-import com.gomyck.util.StringJudge;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public class SimpleUploadService implements UploadService {
         } finally {
             rs.finishDoIt();
         }
-        if(StringJudge.isNull(string)) return null;
+        if(ObjectJudge.isNull(string)) return null;
         return CKJSON.getInstance().parseObject(string, CkFileInfo.class);
     }
 
@@ -164,7 +164,7 @@ public class SimpleUploadService implements UploadService {
         try {
             rs.startDoIt();
             fileInfo = rs.hGet(Constant.COMPLETED_MAP, fileMd5);
-            if(StringJudge.isNull(fileInfo)) return null;
+            if(ObjectJudge.isNull(fileInfo)) return null;
         } finally {
             rs.finishDoIt();
         }

@@ -2,7 +2,7 @@
 
 package com.gomyck.fastdfs.starter.profile;
 
-import com.gomyck.util.StringJudge;
+import com.gomyck.util.ObjectJudge;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -67,7 +67,7 @@ public class FileServerProfile {
      * @return
      */
     public String getFileServerURI(){
-        return StringJudge.isNull(fileServerProtocol) ? "http" : fileServerProtocol + "://" + fileServerUrl;
+        return ObjectJudge.isNull(fileServerProtocol) ? "http" : fileServerProtocol + "://" + fileServerUrl;
     }
 
     public Long getChunkSize() {

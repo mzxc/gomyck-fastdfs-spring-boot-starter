@@ -33,8 +33,8 @@ import com.gomyck.fastdfs.starter.controller.UploadManageHandler;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.CkDateUtil;
+import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.R;
-import com.gomyck.util.StringJudge;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -113,7 +113,7 @@ public class FileCleanTask {
      * @param expireFile 过期的文件
      */
     private void doClean(String expireFile) {
-        if(StringJudge.isNull(expireFile)) return;
+        if(ObjectJudge.isNull(expireFile)) return;
         log.info("clear expire file start : {}", expireFile);
         R r = uploadManageHandler.batchDelFile(expireFile);
         log.info("==========clear expire file end, drop file is : {}==========", r);

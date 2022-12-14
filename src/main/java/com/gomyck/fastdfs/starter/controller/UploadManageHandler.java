@@ -27,10 +27,10 @@ import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
+import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.PageUtil;
 import com.gomyck.util.ParamUtil;
 import com.gomyck.util.R;
-import com.gomyck.util.StringJudge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,7 +98,7 @@ public class UploadManageHandler {
     public R delFile(String fileMd5) {
         ServiceCheck.uploadServiceCheck(us);
         CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
-        if (fileInfo == null || StringJudge.hasNull(fileInfo.getUploadPath())) {
+        if (fileInfo == null || ObjectJudge.hasNull(fileInfo.getUploadPath())) {
             return R.error(R._500, "文件服务器不存在该文件");
         }
         try{
@@ -126,7 +126,7 @@ public class UploadManageHandler {
             CkFileInfo fileInfo = us.getFileByMessageDigest(fileMd5);
             if(fileInfo == null) fileInfo = us.getFileUploadStatus(fileMd5);
             if(fileInfo == null) return;
-            if(StringJudge.isNull(fileInfo.getUploadPath())) return;
+            if(ObjectJudge.isNull(fileInfo.getUploadPath())) return;
             try{
                 storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + File.separator, ""));
             }catch (Exception e){

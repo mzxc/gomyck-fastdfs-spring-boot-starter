@@ -33,8 +33,8 @@ import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.CkContentType;
 import com.gomyck.util.FileUtil;
+import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.ResponseWriter;
-import com.gomyck.util.StringJudge;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -89,9 +89,9 @@ public class SimpleFileDownloadHandler {
     public void simpleDownload(String fileMd5, String fileName, String thumbFlag) {
         CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, fileMd5);
         // 如果自定义文件名 则替换
-        if(StringJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
+        if(ObjectJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
         // 如果是下载略缩图 则替换下载路径
-        if(StringJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals("1")) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
+        if(ObjectJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals("1")) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
         DownloadByteArray callback = new DownloadByteArray();
         byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
         ResponseWriter.writeFile(content, fileInfo.getName(), fileInfo.getType(), true);
@@ -144,7 +144,7 @@ public class SimpleFileDownloadHandler {
                 if (fileInfo == null) continue;
                 DownloadByteArray callback = new DownloadByteArray();
                 byte[] content = ffsc.downloadFile(fileInfo.getGroup(), fileInfo.getUploadPath(), callback);
-                String zipName = bdl.getZipSrc() + (StringJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
+                String zipName = bdl.getZipSrc() + (ObjectJudge.isNull(bdl.getFileName()) ? fileInfo.getName() : bdl.getFileName());
                 ZipEntry zipEntry = new ZipEntry(zipName);
                 FDFSUtil.resolveDuplicate(zos, zipName, zipEntry);
                 zos.write(content);

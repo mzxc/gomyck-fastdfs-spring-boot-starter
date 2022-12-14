@@ -3,7 +3,7 @@
 package com.gomyck.fastdfs.starter.lock;
 
 import com.gomyck.cache.redis.starter.core.redis.RedisCache;
-import com.gomyck.util.StringJudge;
+import com.gomyck.util.ObjectJudge;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -55,6 +55,6 @@ public class SimpleRedisFileLock implements FileLock {
         } finally {
             rc.finishDoIt();
         }
-        return StringJudge.notNull(lock) && Long.parseLong(lock) > 0;
+        return ObjectJudge.notNull(lock) && Long.parseLong(lock) > 0;
     }
 }

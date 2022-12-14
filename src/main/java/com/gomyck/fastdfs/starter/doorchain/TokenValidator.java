@@ -9,7 +9,7 @@
 package com.gomyck.fastdfs.starter.doorchain;
 
 import com.gomyck.cache.redis.starter.core.redis.RedisCache;
-import com.gomyck.util.StringJudge;
+import com.gomyck.util.ObjectJudge;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -35,7 +35,7 @@ public class TokenValidator implements Validator<String>{
      */
     @Override
     public boolean verifyIt(final String token) {
-        return StringJudge.notNull(rs.get(token));
+        return ObjectJudge.notNull(rs.get(token));
     }
 
 }
