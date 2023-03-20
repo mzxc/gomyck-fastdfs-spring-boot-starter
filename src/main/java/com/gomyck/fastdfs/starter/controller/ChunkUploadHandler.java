@@ -102,6 +102,12 @@ public class ChunkUploadHandler {
         return R.ok(stringObjectMap);
     }
 
+    /**
+     * 上传文件
+     * @param fileInfo 文件信息
+     * @param request 请求
+     * @return 上传结果
+     */
     @PostMapping("/uploadFile")
     @ResponseBody
     public R uploadFile(CkFileInfo fileInfo, HttpServletRequest request) {

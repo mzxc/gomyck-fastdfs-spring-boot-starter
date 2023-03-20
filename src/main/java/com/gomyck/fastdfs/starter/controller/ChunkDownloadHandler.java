@@ -89,6 +89,10 @@ public class ChunkDownloadHandler {
      * 文件下载 如果不使用当前requestMapping作为下载入口, 请在业务代码中, 注入该类实例, 调用本方法即可
      *
      * @param fileMd5 文件摘要信息
+     * @param fileMd5 文件摘要信息
+     * @param fileMd5 文件摘要信息
+     * @param fileMd5 文件摘要信息
+     * @param fileMd5 文件摘要信息
      * @param fileName 下载文件名 非必传
      * @param thumbFlag 是否是下载略缩图 非必传  1为下载略缩图, 如果略缩图没有, 就返回原图 (仅图片有此选项, 业务侧使用时自行判断)
      *
