@@ -235,6 +235,11 @@ public class ChunkUploadHandler {
     }
 
 
+    /**
+     * 检查文件
+     * @param fileMd5 文件 MD5
+     * @return 上传信息
+     */
     @PostMapping("/checkFile")
     @ResponseBody
     public R checkFile(String fileMd5) {
