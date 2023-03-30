@@ -72,6 +72,13 @@ public class CkExceptionAdviceController {
     @Autowired
     private RedisCache rc;
 
+    /**
+     * 默认的异常处理器
+     *
+     * @param ex 异常信息
+     * @return 查看页面
+     * @throws UnsupportedEncodingException 编码异常
+     */
     @ExceptionHandler(Exception.class)
     @RedisManager
     public String defaultExceptionHandler(Exception ex) throws UnsupportedEncodingException {
