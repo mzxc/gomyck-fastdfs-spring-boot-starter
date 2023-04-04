@@ -5,9 +5,9 @@ package com.gomyck.fastdfs.starter.database;
 import com.gomyck.cache.redis.starter.core.redis.RedisCache;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
-import com.gomyck.serialize.CKJSON;
 import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.R;
+import com.gomyck.util.serialize.CKJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
