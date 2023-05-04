@@ -13,6 +13,8 @@ import com.gomyck.util.ObjectJudge;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * token 防盗链
+ *
  * @author gomyck
  * --------------------------------
  * | qq: 474798383                 |

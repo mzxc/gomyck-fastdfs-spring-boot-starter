@@ -9,6 +9,8 @@
 package com.gomyck.fastdfs.starter.doorchain;
 
 /**
+ * hash token 防盗链
+ *
  * @author gomyck
  * --------------------------------
  * | qq: 474798383                 |
