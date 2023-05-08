@@ -36,8 +36,7 @@ import com.gomyck.util.CkContentType;
 import com.gomyck.util.FileUtil;
 import com.gomyck.util.ObjectJudge;
 import com.gomyck.util.ResponseWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -62,6 +61,7 @@ import java.util.zip.ZipOutputStream;
  * @version [1.0.0]
  * @since 2021/4/12
  */
+@Slf4j
 @Controller
 @RequestMapping("download/chunkDownload")
 public class ChunkDownloadHandler {
@@ -70,9 +70,6 @@ public class ChunkDownloadHandler {
     public void initBinder(WebDataBinder binder) {
         binder.setAutoGrowCollectionLimit(1000);
     }
-
-    Logger logger = LoggerFactory.getLogger(ChunkDownloadHandler.class);
-
 
     @Autowired
     FastFileStorageClient ffsc;
@@ -179,7 +176,7 @@ public class ChunkDownloadHandler {
                 DownloadByteArray callback = new DownloadByteArray();
                 CkFileInfo fileInfo = us.getFileByMessageDigest(bdl.getFileMd5());
                 if (fileInfo == null) {
-                    logger.error("从数据库查询文件信息出错, 文件MD5: {}", bdl.getFileMd5());
+                    log.error("从数据库查询文件信息出错, 文件MD5: {}", bdl.getFileMd5());
                     continue;
                 }
                 FileInfo remoteFileInfo;
@@ -187,7 +184,7 @@ public class ChunkDownloadHandler {
                     remoteFileInfo = ffsc.queryFileInfo(fileInfo.getGroup(), fileInfo.getUploadPath());
                     if (remoteFileInfo == null) continue;
                 } catch (Exception e) {
-                    logger.error("从文件服务器查询文件信息出错, 分组: {}, 路径: {}", fileInfo.getGroup(), fileInfo.getUploadPath());
+                    log.error("从文件服务器查询文件信息出错, 分组: {}, 路径: {}", fileInfo.getGroup(), fileInfo.getUploadPath());
                     continue;
                 }
                 long cycle = 0L;  //下载次数

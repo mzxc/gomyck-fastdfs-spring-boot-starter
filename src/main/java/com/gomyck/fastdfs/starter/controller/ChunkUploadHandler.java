@@ -36,8 +36,7 @@ import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.lock.FileLock;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -65,11 +64,10 @@ import java.util.Map;
  * @version [1.0.0]
  * @since 2021/5/13
  */
+@Slf4j
 @Controller
 @RequestMapping("/upload/chunkUpload")
 public class ChunkUploadHandler {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private AppendFileStorageClient appendFileStorageClient;
