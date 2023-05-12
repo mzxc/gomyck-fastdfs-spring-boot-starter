@@ -62,9 +62,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FileCleanTask {
 
+    /**
+     * 上传服务
+     */
     @Autowired
     UploadService uploadService;
 
+    /**
+     * 上传处理器
+     */
     @Autowired
     UploadManageHandler uploadManageHandler;
 
