@@ -19,6 +19,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class SimpleMapFileLock extends ConcurrentHashMap<String, Integer> implements FileLock {
 
+    /**
+     * 文件锁, 简单的公平同步锁
+     */
     private static ReentrantLock rl = new ReentrantLock(true);
 
     @Override
