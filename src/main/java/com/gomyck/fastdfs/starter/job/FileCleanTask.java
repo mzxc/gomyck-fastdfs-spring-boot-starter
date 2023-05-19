@@ -74,6 +74,9 @@ public class FileCleanTask {
     @Autowired
     UploadManageHandler uploadManageHandler;
 
+    /**
+     * redis 缓存
+     */
     @Autowired
     RedisCache rc;
 
