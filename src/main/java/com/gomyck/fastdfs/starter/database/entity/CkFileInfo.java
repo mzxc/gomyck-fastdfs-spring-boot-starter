@@ -19,8 +19,14 @@ import lombok.Data;
 @Data
 public class CkFileInfo {
 
+    /**
+     * 文件 ID
+     */
     private String id;
 
+    /**
+     * 文件名称
+     */
     private String name; //文件名称
 
     private String group; //组
