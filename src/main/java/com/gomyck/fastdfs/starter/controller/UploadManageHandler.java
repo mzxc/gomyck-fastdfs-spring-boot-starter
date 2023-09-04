@@ -30,7 +30,7 @@ import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.CkPage;
 import com.gomyck.util.CkParam;
 import com.gomyck.util.ObjectJudge;
-import com.gomyck.util.R;
+import com.gomyck.util.servlet.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;

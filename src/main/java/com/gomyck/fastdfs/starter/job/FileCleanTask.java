@@ -34,7 +34,7 @@ import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.CkDate;
 import com.gomyck.util.ObjectJudge;
-import com.gomyck.util.R;
+import com.gomyck.util.servlet.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

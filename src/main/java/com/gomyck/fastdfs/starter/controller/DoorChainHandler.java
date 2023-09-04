@@ -1,6 +1,6 @@
 package com.gomyck.fastdfs.starter.controller;
 
-import com.gomyck.util.R;
+import com.gomyck.util.servlet.R;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

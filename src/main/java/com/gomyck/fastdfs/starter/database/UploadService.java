@@ -3,7 +3,7 @@
 package com.gomyck.fastdfs.starter.database;
 
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
-import com.gomyck.util.R;
+import com.gomyck.util.servlet.R;
 
 import java.util.List;
 

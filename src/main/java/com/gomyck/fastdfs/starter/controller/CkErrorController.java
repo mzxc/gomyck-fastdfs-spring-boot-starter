@@ -30,7 +30,7 @@ package com.gomyck.fastdfs.starter.controller;
 import com.gomyck.cache.redis.starter.core.redis.RedisCache;
 import com.gomyck.cache.redis.starter.core.redis.annotation.RedisManager;
 import com.gomyck.fastdfs.starter.common.Constant;
-import com.gomyck.util.R;
+import com.gomyck.util.servlet.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
