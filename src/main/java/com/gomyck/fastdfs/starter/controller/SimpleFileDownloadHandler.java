@@ -32,9 +32,9 @@ import com.gomyck.fastdfs.starter.database.entity.BatchDownLoadParameter;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.CkContentType;
-import com.gomyck.util.FileUtil;
+import com.gomyck.util.CkFile;
 import com.gomyck.util.ObjectJudge;
-import com.gomyck.util.ResponseWriter;
+import com.gomyck.util.servlet.ResponseWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -89,7 +89,7 @@ public class SimpleFileDownloadHandler {
     public void simpleDownload(String fileMd5, String fileName, String thumbFlag) {
         CkFileInfo fileInfo = FDFSUtil.getFileInfo(us, fileMd5);
         // 如果自定义文件名 则替换
-        if(ObjectJudge.notNull(fileName)) fileInfo.setName(FileUtil.getFileNameAndSuffix(fileName)[0] + "." + FileUtil.getFileNameAndSuffix(fileInfo.getName())[1]);
+        if(ObjectJudge.notNull(fileName)) fileInfo.setName(CkFile.getFileNameAndSuffix(fileName)[0] + "." + CkFile.getFileNameAndSuffix(fileInfo.getName())[1]);
         // 如果是下载略缩图 则替换下载路径
         if(ObjectJudge.notNull(thumbFlag, fileInfo.getThumbImgPath()) && thumbFlag.equals("1")) fileInfo.setUploadPath(fileInfo.getThumbImgPath());
         DownloadByteArray callback = new DownloadByteArray();

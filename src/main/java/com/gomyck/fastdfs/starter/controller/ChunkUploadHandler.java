@@ -36,6 +36,7 @@ import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.lock.FileLock;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.*;
+import com.gomyck.util.spring.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,7 +94,7 @@ public class ChunkUploadHandler {
     @GetMapping("/config")
     @ResponseBody
     public R config() {
-        Map<String, Object> stringObjectMap = ParamUtil.initParams();
+        Map<String, Object> stringObjectMap = CkParam.initParams();
         stringObjectMap.put("maxFileSize", Long.parseLong(maxSize.replace("MB", "")) * 1024 * 1024);
         stringObjectMap.put("chunkSize", fsp.getChunkSize());
         stringObjectMap.put("fileServerUrl", fsp.getFileServerURI());
@@ -156,7 +157,7 @@ public class ChunkUploadHandler {
                 try {
                     if (currentChunk == 0) {
                         try {
-                            path = appendFileStorageClient.uploadAppenderFile(fileInfo.getGroup(), file.getInputStream(), file.getSize(), FileUtil.getFileSuffixNameByFileName(fileInfo.getName()));
+                            path = appendFileStorageClient.uploadAppenderFile(fileInfo.getGroup(), file.getInputStream(), file.getSize(), CkFile.getFileSuffixNameByFileName(fileInfo.getName()));
                             if (path == null) {
                                 return R.error(R._500, "文件服务器未返回存储路径, 请联系管理员");
                             }
@@ -164,7 +165,7 @@ public class ChunkUploadHandler {
                             e.printStackTrace();
                             return R.error(R._500, "上传文件服务器文件出错" + e.getMessage());
                         }
-                        fileInfo.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT_1));
+                        fileInfo.setUploadTime(CkDate.now2Str(CkDate.DUF.CN_DATETIME_FORMAT_1));
                         fileInfo.setGroup(fileInfo.getGroup());
                         fileInfo.setUploadPath(path.getPath());
                     } else {
@@ -181,7 +182,7 @@ public class ChunkUploadHandler {
                     us.saveFileUploadStatus(historyFileInfo);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
-                        historyFileInfo.setUploadTime(CkDateUtil.now2Str(CkDateUtil.DUF.CN_DATETIME_FORMAT_1));
+                        historyFileInfo.setUploadTime(CkDate.now2Str(CkDate.DUF.CN_DATETIME_FORMAT_1));
                         generateThumbImg(historyFileInfo);
                         us.saveUploadInfo(historyFileInfo);
                         us.delFileUploadStatus(historyFileInfo.getFileMd5());
@@ -211,7 +212,7 @@ public class ChunkUploadHandler {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
                 FastImageFile.Builder builder = new FastImageFile.Builder();
                 builder.toGroup(historyFileInfo.getGroup());
-                builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), FileUtil.getFileSuffixNameByFileName(historyFileInfo.getName()));
+                builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), CkFile.getFileSuffixNameByFileName(historyFileInfo.getName()));
                 if(ObjectJudge.notNull(historyFileInfo.getThumbImgPercent()))  {
                     builder.withThumbImage(historyFileInfo.getThumbImgPercent());
                 } else if(ObjectJudge.notNull(historyFileInfo.getThumbImgWidth(), historyFileInfo.getThumbImgHeight())) {
@@ -220,7 +221,7 @@ public class ChunkUploadHandler {
                     builder.withThumbImage();
                 }
                 FastImageFile imgFile = builder.build();
-                builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), FileUtil.getFileSuffixNameByFileName(historyFileInfo.getName()));
+                builder.withFile(byteArrayInputStream, historyFileInfo.getSize(), CkFile.getFileSuffixNameByFileName(historyFileInfo.getName()));
                 StorePath storePath = simpleFileDownloadHandler.uploadImage(imgFile);
                 simpleFileDownloadHandler.deleteFile(storePath.getGroup(), storePath.getPath()); // 删除略缩图的原图
                 historyFileInfo.setThumbImgPath(imgFile.getThumbImagePath(storePath.getPath()));

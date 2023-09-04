@@ -27,9 +27,9 @@ import com.gomyck.fastdfs.starter.database.ServiceCheck;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
+import com.gomyck.util.CkPage;
+import com.gomyck.util.CkParam;
 import com.gomyck.util.ObjectJudge;
-import com.gomyck.util.PageUtil;
-import com.gomyck.util.ParamUtil;
 import com.gomyck.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -81,9 +81,9 @@ public class UploadManageHandler {
         ServiceCheck.uploadServiceCheck(us);
         if(pageIndex == null) pageIndex = 1L;
         if(limit == null) limit = -1L;
-        Map<String, Object> stringObjectMap = ParamUtil.initParams();
+        Map<String, Object> stringObjectMap = CkParam.initParams();
         stringObjectMap.put("fileServerUrl", fsp.getFileServerURI());
-        stringObjectMap.put("fileList", us.selectCompleteFileInfo(PageUtil.getStartOfPage(pageIndex, limit), PageUtil.getEndOfPage(pageIndex, limit)));
+        stringObjectMap.put("fileList", us.selectCompleteFileInfo(CkPage.getStartOfPage(pageIndex, limit), CkPage.getEndOfPage(pageIndex, limit)));
         return R.ok(stringObjectMap);
     }
 
