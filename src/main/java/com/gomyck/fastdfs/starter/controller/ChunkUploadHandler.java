@@ -39,8 +39,9 @@ import com.gomyck.util.CkDate;
 import com.gomyck.util.CkFile;
 import com.gomyck.util.CkParam;
 import com.gomyck.util.ObjectJudge;
+import com.gomyck.util.log.logger.CkLogger;
 import com.gomyck.util.servlet.R;
-import com.gomyck.util.spring.BeanUtil;
+import com.gomyck.util.spring.CkBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -166,7 +167,7 @@ public class ChunkUploadHandler {
                                 return R.error(R._500, "文件服务器未返回存储路径, 请联系管理员");
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.error(CkLogger.getTrace(e));
                             return R.error(R._500, "上传文件服务器文件出错" + e.getMessage());
                         }
                         fileInfo.setUploadTime(CkDate.now2Str(CkDate.DUF.CN_DATETIME_FORMAT_1));
@@ -182,7 +183,7 @@ public class ChunkUploadHandler {
                             return R.error(R._500, "续传文件出错" + e.getMessage());
                         }
                     }
-                    BeanUtil.copyProperties(fileInfo, historyFileInfo); //把本次传入的参数copy到历史数据中, 然后更新
+                    CkBean.copyProperties(fileInfo, historyFileInfo); //把本次传入的参数copy到历史数据中, 然后更新
                     us.saveFileUploadStatus(historyFileInfo);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {

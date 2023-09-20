@@ -30,7 +30,9 @@ import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.CkPage;
 import com.gomyck.util.CkParam;
 import com.gomyck.util.ObjectJudge;
+import com.gomyck.util.log.logger.CkLogger;
 import com.gomyck.util.servlet.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,6 +56,7 @@ import java.util.stream.Stream;
  * @version [1.0.0]
  * @since 2021/6/22
  */
+@Slf4j
 @Controller
 @RequestMapping("upload/manage")
 public class UploadManageHandler {
@@ -105,7 +108,7 @@ public class UploadManageHandler {
             storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + File.separator, ""));
         }catch (FdfsServerException e){
             if(e.getErrorCode() != 2) {
-                e.printStackTrace();
+                log.error(CkLogger.getTrace(e));
                 return R.error(R._500, e.getMessage());
             }
         }
@@ -130,7 +133,7 @@ public class UploadManageHandler {
             try{
                 storageClient.deleteFile(fileInfo.getGroup(), fileInfo.getUploadPath().replace(fileInfo.getGroup() + File.separator, ""));
             }catch (Exception e){
-                e.printStackTrace();
+                log.error(CkLogger.getTrace(e));
                 return;
             }
             us.delFile(fileInfo);

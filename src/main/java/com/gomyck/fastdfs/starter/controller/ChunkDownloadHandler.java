@@ -35,6 +35,7 @@ import com.gomyck.fastdfs.starter.profile.FileServerProfile;
 import com.gomyck.util.CkContentType;
 import com.gomyck.util.CkFile;
 import com.gomyck.util.ObjectJudge;
+import com.gomyck.util.log.logger.CkLogger;
 import com.gomyck.util.servlet.ResponseWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,7 +222,7 @@ public class ChunkDownloadHandler {
             }
             zos.finish();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(CkLogger.getTrace(e));
             throw new RuntimeException(e);
         }
 
