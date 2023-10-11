@@ -17,7 +17,7 @@ Thanks for JetBrains IDEA
 <dependency>
     <groupId>com.gomyck</groupId>
     <artifactId>gomyck-fastdfs-spring-boot-starter</artifactId>
-    <version>1.1.4-RELEASE</version>
+    <version>2.0.1-RELEASE</version>
 </dependency>
 ```
 #### 2.编辑yml文件(以下为全量配置):
