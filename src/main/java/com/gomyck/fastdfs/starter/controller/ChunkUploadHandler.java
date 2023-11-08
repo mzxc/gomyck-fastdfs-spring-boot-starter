@@ -170,7 +170,7 @@ public class ChunkUploadHandler {
                             log.error(CkLogger.getTrace(e));
                             return R.error(R._500, "上传文件服务器文件出错" + e.getMessage());
                         }
-                        fileInfo.setUploadTime(CkDate.now2Str(CkDate.DUF.CN_DATETIME_FORMAT_1));
+                        fileInfo.setUploadTime(CkDate.now2Str(CkDate.CN_DATETIME_FORMAT_1));
                         fileInfo.setGroup(fileInfo.getGroup());
                         fileInfo.setUploadPath(path.getPath());
                     } else {
@@ -187,7 +187,7 @@ public class ChunkUploadHandler {
                     us.saveFileUploadStatus(historyFileInfo);
                     int allChunks = Integer.parseInt(fileInfo.getChunks());
                     if ((currentChunk + 1) == allChunks || allChunks == 0) {
-                        historyFileInfo.setUploadTime(CkDate.now2Str(CkDate.DUF.CN_DATETIME_FORMAT_1));
+                        historyFileInfo.setUploadTime(CkDate.now2Str(CkDate.CN_DATETIME_FORMAT_1));
                         generateThumbImg(historyFileInfo);
                         us.saveUploadInfo(historyFileInfo);
                         us.delFileUploadStatus(historyFileInfo.getFileMd5());

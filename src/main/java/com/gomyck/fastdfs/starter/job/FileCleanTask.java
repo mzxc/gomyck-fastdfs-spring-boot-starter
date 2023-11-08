@@ -94,7 +94,7 @@ public class FileCleanTask {
                 if (expireTime == null) {
                     return false;
                 } else {
-                    LocalDateTime createTime = LocalDateTime.parse(e.getUploadTime(), DateTimeFormatter.ofPattern(CkDate.DUF.CN_DATETIME_FORMAT_1));
+                    LocalDateTime createTime = LocalDateTime.parse(e.getUploadTime(), DateTimeFormatter.ofPattern(CkDate.CN_DATETIME_FORMAT_1));
                     return createTime.plusSeconds(expireTime).isBefore(LocalDateTime.now());
                 }
             }).map(CkFileInfo::getFileMd5).collect(Collectors.joining(","));
@@ -108,7 +108,7 @@ public class FileCleanTask {
                 if (expireTime == null) {
                     return false;
                 } else {
-                    LocalDateTime createTime = LocalDateTime.parse(fileUploadStatus.getUploadTime(), DateTimeFormatter.ofPattern(CkDate.DUF.CN_DATETIME_FORMAT_1));
+                    LocalDateTime createTime = LocalDateTime.parse(fileUploadStatus.getUploadTime(), DateTimeFormatter.ofPattern(CkDate.CN_DATETIME_FORMAT_1));
                     return createTime.plusSeconds(expireTime).isBefore(LocalDateTime.now());
                 }
             }).map(e -> e.replaceAll(Constant.FILE_INFO, "")).collect(Collectors.joining(","));
