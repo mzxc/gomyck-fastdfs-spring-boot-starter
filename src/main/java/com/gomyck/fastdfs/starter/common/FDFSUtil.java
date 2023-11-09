@@ -5,7 +5,7 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.gomyck.fastdfs.starter.database.UploadService;
 import com.gomyck.fastdfs.starter.database.entity.CkFileInfo;
 import com.gomyck.util.CkFile;
-import com.gomyck.util.IdUtil;
+import com.gomyck.util.CkId;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class FDFSUtil {
         try {
             zos.putNextEntry(new ZipEntry(zipEntry));
         } catch (Exception e) {
-            zipEntry = new ZipEntry(CkFile.getFileNameAndSuffix(zipName)[0] + "(" + IdUtil.getUUID() + ")" + "." + CkFile.getFileNameAndSuffix(zipName)[1]);
+            zipEntry = new ZipEntry(CkFile.getFileNameAndSuffix(zipName)[0] + "(" + CkId.getUUID() + ")" + "." + CkFile.getFileNameAndSuffix(zipName)[1]);
             zos.putNextEntry(new ZipEntry(zipEntry));
         }
     }

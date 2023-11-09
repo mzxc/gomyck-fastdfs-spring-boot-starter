@@ -31,8 +31,8 @@ import com.gomyck.cache.redis.starter.core.redis.RedisCache;
 import com.gomyck.cache.redis.starter.core.redis.annotation.RedisManager;
 import com.gomyck.fastdfs.starter.common.Constant;
 import com.gomyck.fastdfs.starter.profile.FileServerProfile;
+import com.gomyck.util.CkId;
 import com.gomyck.util.DataFilter;
-import com.gomyck.util.IdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ public class CkExceptionAdviceController {
     @RedisManager
     public String defaultExceptionHandler(Exception ex) throws UnsupportedEncodingException {
         log.error(ex.getMessage());
-        String uuid = IdUtil.getUUID();
+        String uuid = CkId.getUUID();
         String key = Constant.EXCEPTION_ID + uuid;
         rc.set(key, ex.getMessage());
         rc.expireKeySeconds(key, 60);
