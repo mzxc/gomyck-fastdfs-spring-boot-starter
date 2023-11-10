@@ -17,7 +17,7 @@ package com.gomyck.fastdfs.starter.doorchain;
  * | email: hao474798383@163.com   |
  * | blog: https://blog.gomyck.com |
  * --------------------------------
- * @version [gomyck-quickdev-1.0.0]
+ * @version [gomyck-quickdev-1.0.1]
  * @since 2022/5/20 10:09
  */
 public interface Validator<T> {
