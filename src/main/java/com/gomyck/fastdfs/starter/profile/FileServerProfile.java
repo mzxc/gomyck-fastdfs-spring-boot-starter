@@ -70,6 +70,11 @@ public class FileServerProfile {
         return ObjectJudge.isNull(fileServerProtocol) ? "http" : fileServerProtocol + "://" + fileServerUrl;
     }
 
+    /**
+     * 每个块的大小
+     *
+     * @return byte
+     */
     public Long getChunkSize() {
         return chunkSize * 1024 * 1024;
     }
