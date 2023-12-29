@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * --------------------------------
  * | qq: 474798383                 |
  * | email: hao474798383@163.com   |
- * | blog: https://blog.gomyck.com |
  * --------------------------------
  * @version [gomyck-quickdev-1.0.0]
  * @since 2022/5/20 10:09
