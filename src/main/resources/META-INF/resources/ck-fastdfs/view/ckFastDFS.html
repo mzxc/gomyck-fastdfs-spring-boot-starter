@@ -3,9 +3,9 @@
 <head >
     <meta charset="UTF-8" >
     <title >上传管理</title >
-    <link rel="stylesheet" href="../../ck-3pty/bootstrap/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="../css/bootstrap.min.css" >
     <link rel="stylesheet" href="../css/webuploader.css" >
-    <script src="../../ck-3pty/jquery/jquery-core.min.js" ></script >
+    <script src="../js/jquery.js" ></script >
     <script src="../js/webuploader.nolog.js" ></script >
     <script src="../js/ckFastDFS.js" ></script >
     <script src="../../ck-util/ckUI/ckUI.js" ></script >
@@ -24,7 +24,6 @@
         <button id="btn1" class="upBtn" >点击上传1</button >
         <button id="btn2" class="upBtn" >点击上传2</button >
         <button id="btn3" class="upBtn" >点击上传3</button >
-        <button id="btn4" class="upBtn" >点击上传4</button >
     </div >
 
     <input type="file" name="file" onchange="showPreview(this)" />
@@ -49,12 +48,10 @@
 
 
 <script >
-    var imgCFD;
+    var imgCFD; //定义一个对象, 在 uploader 初始化之后初始化
     function showPreview(source) {
         var file = source.files[0];
-
         imgCFD.addFiles(file);
-
         if(window.FileReader) {
             var fr = new FileReader();
             fr.onloadend = function(e) {
