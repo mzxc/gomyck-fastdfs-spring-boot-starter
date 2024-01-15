@@ -1,14 +1,12 @@
-
 Thanks for JetBrains IDEA 
 
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="150">
 
 ## 开始使用 
 
-### 当前MASTER为2.0.1-SNAPSHOT版本
+### 当前MASTER为2.0.4-SNAPSHOT版本
 
-如果使用 SNAPSHOT 版本 , 请勾选 develop-fastdfs
-
+如果使用 SNAPSHOT 版本, 请勾选 develop-fastdfs
 
 ### 一.环境配置
 
