@@ -63,7 +63,7 @@ public class FileServerProfile {
 
     /**
      * 获取文件服务 URI
-     * @return
+     * @return 获取文件服务 URI
      */
     public String getFileServerURI(){
         return ObjectJudge.isNull(fileServerProtocol) ? "http" : fileServerProtocol + "://" + fileServerUrl;

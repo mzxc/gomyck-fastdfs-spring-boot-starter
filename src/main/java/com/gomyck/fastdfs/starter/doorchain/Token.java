@@ -10,7 +10,7 @@ public interface Token {
 
     /**
      * 是否有效
-     * @return
+     * @return 是否有效
      */
     boolean valid();
 
