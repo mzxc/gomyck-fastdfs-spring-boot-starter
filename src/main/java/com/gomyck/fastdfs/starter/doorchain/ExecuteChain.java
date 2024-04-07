@@ -17,7 +17,6 @@ package com.gomyck.fastdfs.starter.doorchain;
  * | qq: 474798383                 |
  * | email: hao474798383@163.com   |
  * --------------------------------
- * @version [gomyck-quickdev-1.0.0]
  * @since 2022/5/19 08:27
  */
 public interface ExecuteChain {
