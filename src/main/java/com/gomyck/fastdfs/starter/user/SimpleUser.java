@@ -23,7 +23,27 @@ public class SimpleUser implements User {
     }
 
     @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public String getRole() {
+        return "";
+    }
+
+    @Override
+    public String getGroup() {
+        return "";
+    }
+
+    @Override
     public String getPassword() {
         return "simple";
+    }
+
+    @Override
+    public String getDomain() {
+        return "";
     }
 }

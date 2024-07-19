@@ -16,17 +16,35 @@
 
 package com.gomyck.fastdfs.starter.user;
 
-public interface User {
+public class RemoteUser implements User {
 
-    String getUsername();
+    @Override
+    public String getName() {
+        return null;
+    }
 
-    String getName();
+    @Override
+    public String getRole() {
+        return null;
+    }
 
-    String getRole();
+    @Override
+    public String getGroup() {
+        return null;
+    }
 
-    String getGroup();
+    @Override
+    public String getPassword() {
+        return null;
+    }
 
-    String getPassword();
+    @Override
+    public String getUsername() {
+        return null;
+    }
 
-    String getDomain();
+    @Override
+    public String getDomain() {
+        return null;
+    }
 }
