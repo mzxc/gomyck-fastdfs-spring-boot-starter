@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.gomyck.fastdfs.starter.GomyckFastDFSConfiguration
